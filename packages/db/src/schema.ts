@@ -1,6 +1,5 @@
 import { sql } from 'drizzle-orm';
 import {
-  bigint,
   boolean,
   index,
   integer,
@@ -65,17 +64,25 @@ export const accounts = pgTable(
   },
   (account) => ({
     pk: primaryKey({ columns: [account.provider, account.providerAccountId] }),
+    userIdx: index('accounts_user_idx').on(account.userId),
   }),
 );
 
 // === SESSIONS (Auth.js standard) ===
-export const sessions = pgTable('sessions', {
-  sessionToken: text('session_token').primaryKey(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  expires: timestamp('expires', { withTimezone: true }).notNull(),
-});
+export const sessions = pgTable(
+  'sessions',
+  {
+    sessionToken: text('session_token').primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    expires: timestamp('expires', { withTimezone: true }).notNull(),
+  },
+  (t) => ({
+    userIdx: index('sessions_user_idx').on(t.userId),
+    expiresIdx: index('sessions_expires_idx').on(t.expires),
+  }),
+);
 
 // === VERIFICATION TOKENS (Auth.js standard) ===
 export const verificationTokens = pgTable(
@@ -98,7 +105,7 @@ export const uploadSessions = pgTable(
     anonCookieId: text('anon_cookie_id').notNull(),
     userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
     fileCount: integer('file_count').notNull().default(0),
-    totalBytes: bigint('total_bytes', { mode: 'number' }).notNull().default(0),
+    totalBytes: integer('total_bytes').notNull().default(0),
     status: uploadSessionStatus('status').notNull().default('pending'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     expiresAt: timestamp('expires_at', { withTimezone: true })
@@ -168,3 +175,8 @@ export type NewUser = typeof users.$inferInsert;
 export type UploadSession = typeof uploadSessions.$inferSelect;
 export type Report = typeof reports.$inferSelect;
 export type RateLimit = typeof rateLimits.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
+export type VerificationToken = typeof verificationTokens.$inferSelect;
+export type MetricsEvent = typeof metricsEvents.$inferSelect;
+export type NewMetricsEvent = typeof metricsEvents.$inferInsert;
