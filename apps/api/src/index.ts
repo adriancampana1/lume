@@ -3,10 +3,12 @@ import { pathToFileURL } from 'node:url';
 import { Hono } from 'hono';
 import { logger as appLogger } from './lib/logger.js';
 import { healthRoute } from './routes/health.js';
+import { dbCheckRoute } from './routes/db-check.js';
 
 export const app = new Hono();
 
 app.route('/health', healthRoute);
+app.route('/db-check', dbCheckRoute);
 
 const isDirectRun =
   process.argv[1] !== undefined &&
