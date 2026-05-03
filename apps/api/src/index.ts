@@ -8,6 +8,7 @@ import { dbCheckRoute } from './routes/db-check.js';
 import { sessionsRoute } from './routes/sessions.js';
 import { onboardingRoute } from './routes/onboarding.js';
 import { meRoute } from './routes/me.js';
+import { reportsRoute } from './routes/reports.js';
 import { startSweeper } from './jobs/sweeper.js';
 import type { Variables } from './types.js';
 
@@ -19,6 +20,7 @@ app.route('/auth', authRoute);
 app.route('/sessions', sessionsRoute);
 app.route('/onboarding', onboardingRoute);
 app.route('/me', meRoute);
+app.route('/reports', reportsRoute);
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   startSweeper({
