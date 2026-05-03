@@ -1,0 +1,68 @@
+{
+  "periodStart": "2026-04-01",
+  "periodEnd": "2026-04-30",
+  "transactionsCount": 4,
+  "totalSpentCents": 35000,
+  "totalReceivedCents": 500000,
+  "categories": {
+    "moradia": 0,
+    "mercado": 14550,
+    "restaurante": 0,
+    "transporte": 9440,
+    "saude": 0,
+    "educacao": 0,
+    "lazer_e_hobby": 0,
+    "compras": 0,
+    "assinaturas_e_servicos": 8990,
+    "transferencias_e_outros": 2020
+  },
+  "recurring": [
+    {
+      "description": "NETFLIX",
+      "category": "assinaturas_e_servicos",
+      "averageAmountCents": 8990,
+      "occurrencesPerMonth": 1,
+      "monthsSeen": 1,
+      "status": "active",
+      "lastSeenDate": "2026-04-05"
+    }
+  ],
+  "trends": [],
+  "topMerchants": [
+    {
+      "description": "PAO DE ACUCAR",
+      "category": "mercado",
+      "totalCents": 14550,
+      "occurrences": 1
+    }
+  ],
+  "benchmark": {
+    "incomeBracket": "from_3k_to_6k",
+    "reference": "POF/IBGE 2024",
+    "byCategoryPct": {
+      "moradia": 0.30,
+      "mercado": 0.16,
+      "restaurante": 0.07,
+      "transporte": 0.17,
+      "saude": 0.08,
+      "educacao": 0.05,
+      "lazer_e_hobby": 0.05,
+      "compras": 0.06,
+      "assinaturas_e_servicos": 0.03,
+      "transferencias_e_outros": 0.03
+    }
+  },
+  "narrative": {
+    "summary": "Em abril, você gastou R$ 350 no total — distribuídos em 4 transações. O saldo seguiu positivo.",
+    "whereTheMoneyWent": "Mercado liderou com R$ 145, seguido de transporte (R$ 94) e assinaturas (R$ 89).",
+    "trends": "Com apenas 1 mês de dado, ainda não temos tendência confiável.",
+    "recurring": "Identificamos NETFLIX como recorrente ativa.",
+    "benchmark": "Sua faixa gasta em média 16% com mercado.",
+    "recommendations": [
+      "Acompanhar a evolução de mercado nos próximos meses",
+      "Avaliar se NETFLIX continua sendo usado",
+      "Voltar com 2 meses adicionais para tendências"
+    ],
+    "nextSteps": "Gerar novo relatório em 30 dias com mais um extrato."
+  }
+}
