@@ -1,4 +1,4 @@
-import { Wordmark } from './components/wordmark.js';
+import { Wordmark } from './components/wordmark';
 
 export default function HomePage() {
   return (
