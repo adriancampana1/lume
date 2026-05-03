@@ -12,6 +12,10 @@ describe('parseEnv', () => {
       GOOGLE_CLIENT_ID: 'gid',
       GOOGLE_CLIENT_SECRET: 'gsecret',
       TMP_DIR: '/tmp/lume',
+      ANTHROPIC_API_KEY: 'sk-ant-test',
+      RESEND_API_KEY: 're_test',
+      EMAIL_FROM: 'noreply@lume.test',
+      PUBLIC_BASE_URL: 'http://localhost:3000',
       LOG_LEVEL: 'info',
     });
     expect(env.PORT).toBe(3001);
@@ -28,6 +32,10 @@ describe('parseEnv', () => {
       GOOGLE_CLIENT_ID: 'g',
       GOOGLE_CLIENT_SECRET: 's',
       TMP_DIR: '/tmp/lume',
+      ANTHROPIC_API_KEY: 'sk-ant-test',
+      RESEND_API_KEY: 're_test',
+      EMAIL_FROM: 'noreply@lume.test',
+      PUBLIC_BASE_URL: 'http://localhost:3000',
       LOG_LEVEL: 'silent',
     });
     expect(env.PORT).toBe(4000);
