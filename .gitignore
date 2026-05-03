@@ -17,3 +17,4 @@ docs/superpowers/
 .pnpm-store/
 postgres-data/
 /tmp/lume/
+packages/ai/tests/fixtures/real-statement.pdf

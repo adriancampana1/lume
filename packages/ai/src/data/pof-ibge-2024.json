@@ -1,0 +1,65 @@
+{
+  "reference": "POF/IBGE 2024",
+  "byBracket": {
+    "up_to_3k": {
+      "moradia": 0.32,
+      "mercado": 0.18,
+      "restaurante": 0.04,
+      "transporte": 0.16,
+      "saude": 0.08,
+      "educacao": 0.03,
+      "lazer_e_hobby": 0.04,
+      "compras": 0.06,
+      "assinaturas_e_servicos": 0.03,
+      "transferencias_e_outros": 0.06
+    },
+    "from_3k_to_6k": {
+      "moradia": 0.30,
+      "mercado": 0.16,
+      "restaurante": 0.07,
+      "transporte": 0.17,
+      "saude": 0.08,
+      "educacao": 0.05,
+      "lazer_e_hobby": 0.05,
+      "compras": 0.06,
+      "assinaturas_e_servicos": 0.03,
+      "transferencias_e_outros": 0.03
+    },
+    "from_6k_to_12k": {
+      "moradia": 0.28,
+      "mercado": 0.14,
+      "restaurante": 0.10,
+      "transporte": 0.16,
+      "saude": 0.09,
+      "educacao": 0.07,
+      "lazer_e_hobby": 0.06,
+      "compras": 0.06,
+      "assinaturas_e_servicos": 0.02,
+      "transferencias_e_outros": 0.02
+    },
+    "from_12k_to_25k": {
+      "moradia": 0.25,
+      "mercado": 0.12,
+      "restaurante": 0.12,
+      "transporte": 0.15,
+      "saude": 0.10,
+      "educacao": 0.10,
+      "lazer_e_hobby": 0.07,
+      "compras": 0.05,
+      "assinaturas_e_servicos": 0.02,
+      "transferencias_e_outros": 0.02
+    },
+    "above_25k": {
+      "moradia": 0.22,
+      "mercado": 0.10,
+      "restaurante": 0.14,
+      "transporte": 0.14,
+      "saude": 0.10,
+      "educacao": 0.13,
+      "lazer_e_hobby": 0.08,
+      "compras": 0.05,
+      "assinaturas_e_servicos": 0.02,
+      "transferencias_e_outros": 0.02
+    }
+  }
+}
