@@ -11,9 +11,11 @@
     "test": "echo 'no tests yet' && exit 0"
   },
   "dependencies": {
+    "@lume/shared": "workspace:*",
     "next": "^15.0.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0-beta.4",

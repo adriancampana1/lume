@@ -5,35 +5,48 @@ services:
     environment:
       POSTGRES_DB: lume
       POSTGRES_USER: lume
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lume}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U lume -d lume"]
-      interval: 5s
-      timeout: 3s
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   api:
-    image: ghcr.io/${GITHUB_REPOSITORY}-api:latest
+    image: ghcr.io/${GITHUB_REPOSITORY_LOWER}/api:${IMAGE_TAG:-latest}
     restart: unless-stopped
-    environment:
-      DATABASE_URL: postgres://lume:${POSTGRES_PASSWORD:-lume}@db:5432/lume
-    ports:
-      - "3001:3001"
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgres://lume:lume@db:5432/lume
+      LOG_LEVEL: info
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET is required}
+      AUTH_URL: ${AUTH_URL:?AUTH_URL is required}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?GOOGLE_CLIENT_ID is required}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?GOOGLE_CLIENT_SECRET is required}
+      TMP_DIR: /tmp/lume
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - lume-tmp:/tmp/lume
 
   web:
-    image: ghcr.io/${GITHUB_REPOSITORY}-web:latest
+    image: ghcr.io/${GITHUB_REPOSITORY_LOWER}/web:${IMAGE_TAG:-latest}
     restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_APP_URL: https://lume.example.com
-    ports:
-      - "3000:3000"
     depends_on:
       - api
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${PUBLIC_BASE_URL}/api
+      API_INTERNAL_URL: http://api:3001
+    ports:
+      - "127.0.0.1:3000:3000"
 
 volumes:
   postgres-data:
+  lume-tmp:
