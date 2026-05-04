@@ -60,12 +60,12 @@ export function parseOfx(buf: Buffer): Statement {
     const memo = tagValue(block, 'MEMO') ?? tagValue(block, 'NAME') ?? '';
     if (!dt || !amt) continue;
     const amountCents = parseAmountCents(amt);
-    const kind = amountCents < 0 ? 'debit' : 'credit';
+    const kind: 'debit' | 'credit' = amountCents < 0 ? 'debit' : 'credit';
     transactions.push({
       date: parseDate(dt),
       description: memo,
       amountCents,
-      kind: kind as const,
+      kind,
     });
     if (amountCents < 0) totalDebits += Math.abs(amountCents);
     else totalCredits += amountCents;

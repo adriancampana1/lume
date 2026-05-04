@@ -42,7 +42,9 @@ async function ingestOne(
     return parseOfx(Buffer.from(anonText, 'utf8'));
   }
   onStage('extracting');
-  return extractStatementFromPdf({ llm, pdf: input.buffer, filename: input.filename });
+  const statement = await extractStatementFromPdf({ llm, pdf: input.buffer, filename: input.filename });
+  onStage('anonymizing');
+  return statement;
 }
 
 export async function runPipeline(opts: PipelineOptions): Promise<Report> {
