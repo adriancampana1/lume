@@ -171,6 +171,7 @@ export async function executeReport(
 }
 
 reportsRoute.post('/generate', requireAuth, async (c) => {
+  if (env.MAINTENANCE_MODE) return c.json({ error: 'maintenance' }, 503);
   const user = c.get('user')!;
   let body: unknown;
   try {
@@ -230,6 +231,7 @@ const PIPELINE_STAGES: PipelineStage[] = [
 ];
 
 reportsRoute.post('/generate/stream', requireAuth, async (c) => {
+  if (env.MAINTENANCE_MODE) return c.json({ error: 'maintenance' }, 503);
   const user = c.get('user')!;
   let body: unknown;
   try {

@@ -106,6 +106,7 @@ sessionsRoute.post('/:id/claim', requireAuth, async (c) => {
 });
 
 sessionsRoute.post('/upload', async (c) => {
+  if (env.MAINTENANCE_MODE) return c.json({ error: 'maintenance' }, 503);
   const cookie = getCookie(c, ANON_COOKIE_NAME);
   if (!cookie) return c.json({ error: 'no_anon_cookie' }, 401);
   const verified = verifyValue(cookie, env.AUTH_SECRET);

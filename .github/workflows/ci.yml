@@ -62,4 +62,13 @@ jobs:
 
       - run: pnpm test
 
+      - name: Security audit (high+)
+        run: pnpm audit --audit-level high
+
+      - name: Confirm critical tests exist (anti-regression gate)
+        run: |
+          test -f apps/api/tests/pii-redact.test.ts
+          test -f apps/api/tests/sweeper.test.ts
+          test -f packages/ai/tests/reconcile.test.ts
+
       - run: pnpm build
