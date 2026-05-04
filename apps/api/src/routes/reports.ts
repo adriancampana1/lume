@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
-import { db, rateLimits, reports, uploadSessions, users } from '@lume/db';
+import { db, rateLimits, reportQueue, reports, uploadSessions, users } from '@lume/db';
 import { runPipeline } from '@lume/ai';
 import type { PipelineStage } from '@lume/ai';
 import { renderReportToHtml, htmlToPdfBuffer, formatPeriod } from '@lume/pdf';
@@ -15,6 +15,8 @@ import { getLlmClient } from '../lib/pipeline-bridge.js';
 import { sessionDirPath, removeSessionDir } from '../lib/tmp.js';
 import { sseStream } from '../lib/sse.js';
 import { putPdf, getPdf } from '../lib/pdf-cache.js';
+import { isGlobalCapReached } from '../lib/global-cap.js';
+import { sendQueuedEmail } from '../lib/email.js';
 import type { Variables } from '../types.js';
 
 const GenerateBody = z.object({ sessionId: z.string().uuid() });
@@ -35,7 +37,7 @@ type ExecuteReportResult = {
   periodEnd: string;
 };
 
-async function executeReport(
+export async function executeReport(
   opts: ExecuteReportOpts,
   onStage?: (s: PipelineStage) => void,
 ): Promise<ExecuteReportResult> {
@@ -195,6 +197,12 @@ reportsRoute.post('/generate', requireAuth, async (c) => {
     );
   }
 
+  if (await isGlobalCapReached()) {
+    await db.insert(reportQueue).values({ userId: user.id, sessionId: parsed.data.sessionId, status: 'queued' });
+    try { await sendQueuedEmail(user.email); } catch { /* non-fatal */ }
+    return c.json({ queued: true, message: 'Cap global atingido. Você receberá o relatório em algumas horas.' }, 202);
+  }
+
   try {
     const result = await executeReport({ user, sessionId: parsed.data.sessionId, rl }, undefined);
     return c.json(result);
@@ -246,6 +254,12 @@ reportsRoute.post('/generate/stream', requireAuth, async (c) => {
       },
       429,
     );
+  }
+
+  if (await isGlobalCapReached()) {
+    await db.insert(reportQueue).values({ userId: user.id, sessionId: parsed.data.sessionId, status: 'queued' });
+    try { await sendQueuedEmail(user.email); } catch { /* non-fatal */ }
+    return c.json({ queued: true, message: 'Cap global atingido. Você receberá o relatório em algumas horas.' }, 202);
   }
 
   return sseStream(c, async (send) => {

@@ -153,6 +153,61 @@ export const rateLimits = pgTable('rate_limits', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// === REPORT QUEUE (global cap overflow) ===
+export const reportQueueStatus = pgEnum('report_queue_status', [
+  'queued',
+  'processing',
+  'sent',
+  'failed',
+]);
+
+export const reportQueue = pgTable(
+  'report_queue',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    sessionId: uuid('session_id').notNull(),
+    status: reportQueueStatus('status').notNull().default('queued'),
+    queuedAt: timestamp('queued_at', { withTimezone: true }).notNull().defaultNow(),
+    processedAt: timestamp('processed_at', { withTimezone: true }),
+    failureReason: text('failure_reason'),
+  },
+  (t) => ({
+    statusIdx: index('report_queue_status_idx').on(t.status),
+    userIdx: index('report_queue_user_idx').on(t.userId),
+  }),
+);
+
+// === AUDIT LOG (LGPD) ===
+export const auditAction = pgEnum('audit_action', [
+  'profile_export',
+  'profile_delete',
+  'marketing_opt_in_changed',
+  'income_changed',
+  'sign_in',
+  'sign_out',
+]);
+
+export const auditLog = pgTable(
+  'audit_log',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+    action: auditAction('action').notNull(),
+    detail: jsonb('detail').notNull().default({}),
+    ip: text('ip'),
+    userAgent: text('user_agent'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    userIdx: index('audit_log_user_idx').on(t.userId),
+    actionIdx: index('audit_log_action_idx').on(t.action),
+    timeIdx: index('audit_log_time_idx').on(t.createdAt),
+  }),
+);
+
 // === METRICS EVENTS (telemetria minimalista) ===
 export const metricsEvents = pgTable(
   'metrics_events',
@@ -180,3 +235,5 @@ export type Session = typeof sessions.$inferSelect;
 export type VerificationToken = typeof verificationTokens.$inferSelect;
 export type MetricsEvent = typeof metricsEvents.$inferSelect;
 export type NewMetricsEvent = typeof metricsEvents.$inferInsert;
+export type ReportQueue = typeof reportQueue.$inferSelect;
+export type AuditLog = typeof auditLog.$inferSelect;

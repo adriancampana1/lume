@@ -36,3 +36,15 @@ export async function sendReportEmail(input: SendReportEmailInput): Promise<void
     throw new Error(`resend error: ${result.error.message}`);
   }
 }
+
+export async function sendQueuedEmail(email: string): Promise<void> {
+  const result = await resend.emails.send({
+    from: env.EMAIL_FROM,
+    to: [email],
+    subject: 'Recebemos seu pedido · Lume',
+    html: `<p>Recebemos seu pedido de análise. Hoje atingimos o limite gratuito do dia, então seu relatório vai ser gerado e enviado por email em algumas horas.</p><p>Sem ação da sua parte.</p>`,
+  });
+  if (result.error) {
+    throw new Error(`resend error: ${result.error.message}`);
+  }
+}
