@@ -1,4 +1,5 @@
 import pino from 'pino';
+import { redactValue } from './pii-redact.js';
 
 const isDev = process.env['NODE_ENV'] !== 'production';
 
@@ -14,6 +15,11 @@ export const logger = pino({
       '*.email',
     ],
     censor: '[REDACTED]',
+  },
+  formatters: {
+    log(obj) {
+      return redactValue(obj) as Record<string, unknown>;
+    },
   },
   ...(isDev && {
     transport: {
