@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { and, eq, isNull } from 'drizzle-orm';
-import { db, reports, uploadSessions, users } from '@lume/db';
+import { db, rateLimits, reports, uploadSessions, users } from '@lume/db';
 import { requireAuth } from '../middleware/require-auth.js';
 import type { Variables } from '../types.js';
 
@@ -51,6 +51,29 @@ meRoute.get('/data', requireAuth, async (c) => {
     })),
     exportedAt: new Date().toISOString(),
   });
+});
+
+meRoute.patch('/', requireAuth, async (c) => {
+  const user = c.get('user')!;
+  let body: unknown;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: 'invalid_json' }, 400);
+  }
+  const { marketingOptIn } = body as { marketingOptIn?: boolean };
+  if (typeof marketingOptIn === 'boolean') {
+    await db.update(users).set({ marketingOptIn }).where(eq(users.id, user.id));
+  }
+  return c.json({ ok: true });
+});
+
+meRoute.get('/cap', requireAuth, async (c) => {
+  const user = c.get('user')!;
+  const [row] = await db.select().from(rateLimits).where(eq(rateLimits.userId, user.id)).limit(1);
+  if (!row?.nextAvailableAt) return c.json({ daysLeft: 0 });
+  const ms = row.nextAvailableAt.getTime() - Date.now();
+  return c.json({ daysLeft: Math.max(0, Math.ceil(ms / (24 * 60 * 60 * 1000))) });
 });
 
 meRoute.post('/delete', requireAuth, async (c) => {
