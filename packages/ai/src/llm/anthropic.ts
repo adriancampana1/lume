@@ -37,9 +37,15 @@ export class AnthropicLlmClient implements LlmClient {
       model: opts.model,
       max_tokens: opts.maxTokens,
       ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
-      system: opts.system,
+      system: [{ type: 'text', text: opts.system, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: toAnthropicContent(opts.input) }],
     });
+    if (res.usage.cache_read_input_tokens) {
+      console.debug('[anthropic] prompt cache hit', {
+        cacheRead: res.usage.cache_read_input_tokens,
+        cacheCreated: res.usage.cache_creation_input_tokens,
+      });
+    }
     const text = res.content
       .filter((c): c is Anthropic.TextBlock => c.type === 'text')
       .map((c) => c.text)
