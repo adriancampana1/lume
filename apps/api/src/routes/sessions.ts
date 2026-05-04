@@ -146,6 +146,11 @@ sessionsRoute.post('/upload', async (c) => {
     accepted.push({ name: sanitizeFilename(f.name, ext), bytes: buf });
   }
 
+  const sanitizedNames = accepted.map((f) => f.name);
+  if (new Set(sanitizedNames).size !== sanitizedNames.length) {
+    return c.json({ error: 'duplicate_filename' }, 400);
+  }
+
   await ensureSessionDir(env.TMP_DIR, sessionId);
   const dir = sessionDirPath(env.TMP_DIR, sessionId);
   for (const f of accepted) {

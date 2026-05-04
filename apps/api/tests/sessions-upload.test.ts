@@ -1,5 +1,4 @@
-import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { db, uploadSessions } from '@lume/db';
@@ -27,7 +26,7 @@ async function createSession(): Promise<{ sessionId: string; cookie: string }> {
 function makeFormData(files: { name: string; bytes: Uint8Array; type: string }[]): FormData {
   const fd = new FormData();
   for (const f of files) {
-    fd.append('files', new Blob([f.bytes as unknown as Uint8Array<ArrayBuffer>], { type: f.type }), f.name);
+    fd.append('files', new Blob([f.bytes.buffer as ArrayBuffer], { type: f.type }), f.name);
   }
   return fd;
 }
@@ -89,7 +88,7 @@ describe('POST /sessions/upload', () => {
     expect(body.error).toBe('file_too_large');
   });
 
-  it('rejects non PDF/OFX mime', async () => {
+  it('rejects non PDF/OFX extension', async () => {
     const { cookie } = await createSession();
     const res = await app.request('/sessions/upload', {
       method: 'POST',
@@ -109,5 +108,20 @@ describe('POST /sessions/upload', () => {
       body: makeFormData([{ name: 'a.pdf', bytes: PDF_HEADER, type: 'application/pdf' }]),
     });
     expect(res.status).toBe(401);
+  });
+
+  it('rejects files whose sanitized names collide', async () => {
+    const { cookie } = await createSession();
+    const res = await app.request('/sessions/upload', {
+      method: 'POST',
+      headers: { cookie },
+      body: makeFormData([
+        { name: 'hello world.pdf', bytes: PDF_HEADER, type: 'application/pdf' },
+        { name: 'hello!world.pdf', bytes: PDF_HEADER, type: 'application/pdf' },
+      ]),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toBe('duplicate_filename');
   });
 });
