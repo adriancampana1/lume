@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { and, eq, isNull } from 'drizzle-orm';
 import { db, rateLimits, reports, uploadSessions, users } from '@lume/db';
 import { requireAuth } from '../middleware/require-auth.js';
+import { audit } from '../lib/audit.js';
 import type { Variables } from '../types.js';
 
 export const meRoute = new Hono<{ Variables: Variables }>();
@@ -23,6 +24,7 @@ meRoute.get('/data', requireAuth, async (c) => {
     .from(uploadSessions)
     .where(eq(uploadSessions.userId, user.id));
 
+  await audit(c, user.id, 'profile_export');
   return c.json({
     user: {
       id: row.id,
@@ -63,7 +65,11 @@ meRoute.patch('/', requireAuth, async (c) => {
   }
   const { marketingOptIn } = body as { marketingOptIn?: boolean };
   if (typeof marketingOptIn === 'boolean') {
+    const [before] = await db.select().from(users).where(eq(users.id, user.id)).limit(1);
     await db.update(users).set({ marketingOptIn }).where(eq(users.id, user.id));
+    if (before?.marketingOptIn !== marketingOptIn) {
+      await audit(c, user.id, 'marketing_opt_in_changed', { value: marketingOptIn });
+    }
   }
   return c.json({ ok: true });
 });
@@ -78,6 +84,7 @@ meRoute.get('/cap', requireAuth, async (c) => {
 
 meRoute.post('/delete', requireAuth, async (c) => {
   const user = c.get('user')!;
+  await audit(c, user.id, 'profile_delete');
   await db
     .update(users)
     .set({ deletedAt: new Date(), email: `deleted-${user.id}@lume.invalid`, name: null, image: null })
