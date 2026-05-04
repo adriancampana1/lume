@@ -14,6 +14,7 @@ import { sendReportEmail } from '../lib/email.js';
 import { getLlmClient } from '../lib/pipeline-bridge.js';
 import { sessionDirPath, removeSessionDir } from '../lib/tmp.js';
 import { sseStream } from '../lib/sse.js';
+import { putPdf, getPdf } from '../lib/pdf-cache.js';
 import type { Variables } from '../types.js';
 
 const GenerateBody = z.object({ sessionId: z.string().uuid() });
@@ -150,6 +151,9 @@ async function executeReport(
       },
     });
 
+  // Cache PDF for 5-min preview window
+  putPdf(reportRow.id, Buffer.from(pdf), user.id);
+
   // Mark session completed + zero retention
   await db
     .update(uploadSessions)
@@ -268,4 +272,30 @@ reportsRoute.post('/generate/stream', requireAuth, async (c) => {
       });
     }
   });
+});
+
+reportsRoute.get('/:id', requireAuth, async (c) => {
+  const user = c.get('user');
+  if (!user) return c.json({ error: 'unauthorized' }, 401);
+  const id = c.req.param('id');
+  const [row] = await db.select().from(reports).where(eq(reports.id, id)).limit(1);
+  if (!row || row.userId !== user.id) return c.json({ error: 'not_found' }, 404);
+  return c.json({
+    id: row.id,
+    periodStart: row.periodStart.toISOString(),
+    periodEnd: row.periodEnd.toISOString(),
+    transactionsCount: row.transactionsCount,
+    pdfAvailable: !!getPdf(id, user.id),
+  });
+});
+
+reportsRoute.get('/:id/pdf', requireAuth, async (c) => {
+  const user = c.get('user');
+  if (!user) return c.json({ error: 'unauthorized' }, 401);
+  const id = c.req.param('id');
+  const buf = getPdf(id, user.id);
+  if (!buf) return c.json({ error: 'pdf_expired' }, 410);
+  c.header('Content-Type', 'application/pdf');
+  c.header('Content-Disposition', `attachment; filename="lume-${id.slice(0, 8)}.pdf"`);
+  return c.body(new Uint8Array(buf));
 });
