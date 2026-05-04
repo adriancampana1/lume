@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import { writeFile } from 'node:fs/promises';
+import { extname, join } from 'node:path';
 import { Hono } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
 import { eq } from 'drizzle-orm';
@@ -10,10 +12,22 @@ import {
   signValue,
   verifyValue,
 } from '../lib/cookie.js';
-import { ensureSessionDir, removeSessionDir } from '../lib/tmp.js';
+import { ensureSessionDir, removeSessionDir, sessionDirPath } from '../lib/tmp.js';
 import { logger } from '../lib/logger.js';
 import { requireAuth } from '../middleware/require-auth.js';
 import type { Variables } from '../types.js';
+
+const MAX_FILES = 6;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 60 * 1024 * 1024;
+const ALLOWED_EXT = new Set(['.pdf', '.ofx']);
+const ALLOWED_MIME = new Set([
+  'application/pdf',
+  'application/x-ofx',
+  'application/vnd.intu.qfx',
+  'text/plain',
+  'application/octet-stream',
+]);
 
 export const sessionsRoute = new Hono<{ Variables: Variables }>();
 
@@ -90,3 +104,64 @@ sessionsRoute.post('/:id/claim', requireAuth, async (c) => {
   logger.info({ sessionId, userId: user.id }, 'anon upload session claimed');
   return c.json({ ok: true, sessionId });
 });
+
+sessionsRoute.post('/upload', async (c) => {
+  const cookie = getCookie(c, ANON_COOKIE_NAME);
+  if (!cookie) return c.json({ error: 'no_anon_cookie' }, 401);
+  const verified = verifyValue(cookie, env.AUTH_SECRET);
+  if (!verified) return c.json({ error: 'invalid_cookie' }, 401);
+  const [sessionId, anonCookieId] = verified.split('.');
+  if (!sessionId || !anonCookieId) return c.json({ error: 'invalid_cookie' }, 401);
+
+  const [row] = await db
+    .select()
+    .from(uploadSessions)
+    .where(eq(uploadSessions.id, sessionId))
+    .limit(1);
+  if (!row) return c.json({ error: 'session_not_found' }, 404);
+  if (row.anonCookieId !== anonCookieId) return c.json({ error: 'cookie_mismatch' }, 400);
+  if (row.expiresAt.getTime() < Date.now()) return c.json({ error: 'session_expired' }, 410);
+
+  let form: FormData;
+  try {
+    form = await c.req.formData();
+  } catch {
+    return c.json({ error: 'invalid_multipart' }, 400);
+  }
+  const files = form.getAll('files').filter((v): v is File => v instanceof File);
+  if (files.length === 0) return c.json({ error: 'no_files' }, 400);
+  if (files.length > MAX_FILES) return c.json({ error: 'too_many_files' }, 400);
+
+  let totalBytes = 0;
+  const accepted: { name: string; bytes: Uint8Array }[] = [];
+  for (const f of files) {
+    const ext = extname(f.name).toLowerCase();
+    if (!ALLOWED_EXT.has(ext)) return c.json({ error: 'invalid_type' }, 400);
+    if (!ALLOWED_MIME.has(f.type) && f.type !== '')
+      return c.json({ error: 'invalid_type' }, 400);
+    if (f.size > MAX_FILE_BYTES) return c.json({ error: 'file_too_large' }, 400);
+    totalBytes += f.size;
+    if (totalBytes > MAX_TOTAL_BYTES) return c.json({ error: 'total_too_large' }, 400);
+    const buf = new Uint8Array(await f.arrayBuffer());
+    accepted.push({ name: sanitizeFilename(f.name, ext), bytes: buf });
+  }
+
+  await ensureSessionDir(env.TMP_DIR, sessionId);
+  const dir = sessionDirPath(env.TMP_DIR, sessionId);
+  for (const f of accepted) {
+    await writeFile(join(dir, f.name), f.bytes, { mode: 0o600 });
+  }
+
+  await db
+    .update(uploadSessions)
+    .set({ fileCount: accepted.length, totalBytes })
+    .where(eq(uploadSessions.id, sessionId));
+
+  logger.info({ sessionId, fileCount: accepted.length }, 'files uploaded to session');
+  return c.json({ fileCount: accepted.length, totalBytes });
+});
+
+function sanitizeFilename(name: string, ext: string): string {
+  const base = name.slice(0, name.length - ext.length).replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `${base.slice(0, 80) || 'file'}${ext}`;
+}
