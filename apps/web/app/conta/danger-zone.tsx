@@ -8,6 +8,7 @@ export function DangerZone() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async function exportData() {
     startExport(async () => {
       setError(null);
@@ -28,6 +29,7 @@ export function DangerZone() {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async function deleteAccount() {
     startDelete(async () => {
       setError(null);
@@ -55,7 +57,7 @@ export function DangerZone() {
         </div>
         <button
           type="button"
-          onClick={exportData}
+          onClick={() => void exportData()}
           disabled={pendingExport}
           className="shrink-0 rounded-[var(--radius-pill)] border border-[var(--color-ink)]/20 bg-transparent px-5 py-2 text-sm text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]/60 disabled:opacity-60"
         >
@@ -75,7 +77,7 @@ export function DangerZone() {
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
-              onClick={deleteAccount}
+              onClick={() => void deleteAccount()}
               disabled={pendingDelete}
               className="rounded-[var(--radius-pill)] bg-[var(--color-terracotta)] px-5 py-2 text-sm font-medium text-[var(--color-cream)] hover:bg-[var(--color-terracotta-dim)] disabled:opacity-60"
             >

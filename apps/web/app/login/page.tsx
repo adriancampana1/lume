@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 import { Wordmark } from '../components/wordmark.js';
 import { SignInButton } from './sign-in-button.js';
 
@@ -39,7 +40,7 @@ export default async function LoginPage({
         <p className="mt-8 text-xs leading-relaxed text-[var(--color-ink-soft)]">
           Ao entrar, você aceita nossos{' '}
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          <Link href={'/privacidade' as any} className="underline">
+          <Link href={'/privacidade' as Route} className="underline">
             termos de privacidade
           </Link>
           . Seus extratos são processados em segundos e nunca persistidos.
