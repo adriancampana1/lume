@@ -13,6 +13,7 @@ out/
 coverage/
 .turbo/
 .superpowers/
+.worktrees/
 docs/superpowers/
 .pnpm-store/
 postgres-data/
