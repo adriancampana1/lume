@@ -16,7 +16,7 @@ describe('audit log', () => {
       body: JSON.stringify({ marketingOptIn: true }),
     });
     const rows = await db.select().from(auditLog).where(eq(auditLog.userId, user.id));
-    expect(rows.find((r) => r.action === 'marketing_opt_in_changed')).toBeTruthy();
+    expect(rows.find((r) => r['action'] === 'marketing_opt_in_changed')).toBeTruthy();
   });
 
   it('records profile_export on GET /me/data', async () => {
@@ -25,7 +25,7 @@ describe('audit log', () => {
       headers: { cookie: user.cookieHeader },
     });
     const rows = await db.select().from(auditLog).where(eq(auditLog.userId, user.id));
-    expect(rows.find((r) => r.action === 'profile_export')).toBeTruthy();
+    expect(rows.find((r) => r['action'] === 'profile_export')).toBeTruthy();
   });
 
   it('records profile_delete on POST /me/delete', async () => {
@@ -35,6 +35,6 @@ describe('audit log', () => {
       headers: { cookie: user.cookieHeader },
     });
     const rows = await db.select().from(auditLog).where(eq(auditLog.userId, user.id));
-    expect(rows.find((r) => r.action === 'profile_delete')).toBeTruthy();
+    expect(rows.find((r) => r['action'] === 'profile_delete')).toBeTruthy();
   });
 });
