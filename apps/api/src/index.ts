@@ -9,10 +9,19 @@ import { sessionsRoute } from './routes/sessions.js';
 import { onboardingRoute } from './routes/onboarding.js';
 import { meRoute } from './routes/me.js';
 import { reportsRoute } from './routes/reports.js';
-import { startSweeper } from './jobs/sweeper.js';
+import { startCrons } from './crons/index.js';
+import { rateLimit } from './middleware/rate-limit.js';
+import { securityHeaders } from './middleware/security-headers.js';
+import { serverTiming } from './middleware/server-timing.js';
 import type { Variables } from './types.js';
 
 export const app = new Hono<{ Variables: Variables }>();
+
+app.use('*', securityHeaders());
+app.use('*', serverTiming());
+app.use('*', rateLimit(60, 60_000));
+app.use('/reports/*', rateLimit(10, 60_000));
+app.use('/sessions/upload', rateLimit(20, 60_000));
 
 app.route('/health', healthRoute);
 app.route('/db-check', dbCheckRoute);
@@ -23,12 +32,8 @@ app.route('/me', meRoute);
 app.route('/reports', reportsRoute);
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  startSweeper({
-    rootDir: env.TMP_DIR,
-    maxAgeMs: 30 * 60 * 1000,
-    intervalMs: 5 * 60 * 1000,
-  });
   serve({ fetch: app.fetch, port: env.PORT }, (info) => {
     appLogger.info({ port: info.port }, 'api ready');
+    startCrons();
   });
 }
