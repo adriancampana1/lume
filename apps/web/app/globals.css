@@ -34,3 +34,14 @@
     color: var(--color-cream);
   }
 }
+
+@keyframes accordion-down {
+  from { height: 0; opacity: 0 }
+  to { height: var(--radix-accordion-content-height); opacity: 1 }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1 }
+  to { height: 0; opacity: 0 }
+}
+.animate-accordion-down { animation: accordion-down 220ms cubic-bezier(0.16, 1, 0.3, 1) }
+.animate-accordion-up { animation: accordion-up 180ms cubic-bezier(0.7, 0, 0.84, 0) }
