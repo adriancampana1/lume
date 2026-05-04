@@ -3,7 +3,7 @@ import { writeFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { Hono } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
-import { eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { db, uploadSessions } from '@lume/db';
 import { env } from '../env.js';
 import {
@@ -170,3 +170,16 @@ function sanitizeFilename(name: string, ext: string): string {
   const base = name.slice(0, name.length - ext.length).replace(/[^a-zA-Z0-9_-]/g, '_');
   return `${base.slice(0, 80) || 'file'}${ext}`;
 }
+
+sessionsRoute.get('/active', requireAuth, async (c) => {
+  const user = c.get('user');
+  if (!user) return c.json({ error: 'unauthorized' }, 401);
+  const [row] = await db
+    .select()
+    .from(uploadSessions)
+    .where(and(eq(uploadSessions.userId, user.id), eq(uploadSessions.status, 'pending')))
+    .orderBy(desc(uploadSessions.createdAt))
+    .limit(1);
+  if (!row) return c.json({ error: 'no_session' }, 404);
+  return c.json({ sessionId: row.id });
+});
