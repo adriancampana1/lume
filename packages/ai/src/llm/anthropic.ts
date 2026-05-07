@@ -29,16 +29,37 @@ export class AnthropicLlmClient implements LlmClient {
   private readonly sdk: Anthropic;
 
   constructor(opts: AnthropicLlmClientOptions) {
-    this.sdk = new Anthropic({ apiKey: opts.apiKey });
+    this.sdk = new Anthropic({ apiKey: opts.apiKey, timeout: 90_000, maxRetries: 1 });
   }
 
   async call(opts: LlmCallOptions): Promise<LlmCallResult> {
-    const res = await this.sdk.messages.create({
+    const startedAt = Date.now();
+    const promptTag = opts.system.slice(0, 40).replace(/\s+/g, ' ');
+    console.info('[anthropic] call start', { model: opts.model, prompt: promptTag });
+    let res;
+    try {
+      res = await this.sdk.messages.create({
+        model: opts.model,
+        max_tokens: opts.maxTokens,
+        ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
+        system: [{ type: 'text', text: opts.system, cache_control: { type: 'ephemeral' } }],
+        messages: [{ role: 'user', content: toAnthropicContent(opts.input) }],
+      });
+    } catch (err) {
+      console.error('[anthropic] call failed', {
+        model: opts.model,
+        prompt: promptTag,
+        durationMs: Date.now() - startedAt,
+        error: (err as Error).message,
+      });
+      throw err;
+    }
+    console.info('[anthropic] call ok', {
       model: opts.model,
-      max_tokens: opts.maxTokens,
-      ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
-      system: [{ type: 'text', text: opts.system, cache_control: { type: 'ephemeral' } }],
-      messages: [{ role: 'user', content: toAnthropicContent(opts.input) }],
+      prompt: promptTag,
+      durationMs: Date.now() - startedAt,
+      inputTokens: res.usage.input_tokens,
+      outputTokens: res.usage.output_tokens,
     });
     if (res.usage.cache_read_input_tokens) {
       console.debug('[anthropic] prompt cache hit', {

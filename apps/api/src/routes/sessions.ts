@@ -3,7 +3,7 @@ import { writeFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { Hono } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 import { db, uploadSessions } from '@lume/db';
 import { env } from '../env.js';
 import {
@@ -175,12 +175,44 @@ function sanitizeFilename(name: string, ext: string): string {
 sessionsRoute.get('/active', requireAuth, async (c) => {
   const user = c.get('user');
   if (!user) return c.json({ error: 'unauthorized' }, 401);
-  const [row] = await db
+
+  const [claimed] = await db
     .select()
     .from(uploadSessions)
     .where(and(eq(uploadSessions.userId, user.id), eq(uploadSessions.status, 'pending')))
     .orderBy(desc(uploadSessions.createdAt))
     .limit(1);
-  if (!row) return c.json({ error: 'no_session' }, 404);
-  return c.json({ sessionId: row.id });
+
+  if (claimed) return c.json({ sessionId: claimed.id, hasOnboarded: user.hasOnboarded });
+
+  // Try to claim anonymous session created before auth
+  const cookie = getCookie(c, ANON_COOKIE_NAME);
+  if (cookie) {
+    const verified = verifyValue(cookie, env.AUTH_SECRET);
+    if (verified) {
+      const [sessionId, anonCookieId] = verified.split('.');
+      if (sessionId && anonCookieId) {
+        const [anon] = await db
+          .select()
+          .from(uploadSessions)
+          .where(and(eq(uploadSessions.id, sessionId), isNull(uploadSessions.userId)))
+          .limit(1);
+        if (
+          anon &&
+          anon.anonCookieId === anonCookieId &&
+          anon.status === 'pending' &&
+          anon.expiresAt.getTime() > Date.now()
+        ) {
+          await db
+            .update(uploadSessions)
+            .set({ userId: user.id })
+            .where(and(eq(uploadSessions.id, sessionId), isNull(uploadSessions.userId)));
+          logger.info({ sessionId, userId: user.id }, 'anon session auto-claimed');
+          return c.json({ sessionId, hasOnboarded: user.hasOnboarded });
+        }
+      }
+    }
+  }
+
+  return c.json({ error: 'no_session' }, 404);
 });

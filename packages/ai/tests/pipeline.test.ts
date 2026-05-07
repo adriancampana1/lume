@@ -90,10 +90,12 @@ describe('runPipeline', () => {
     expect(extractCalls.length).toBe(0);
   });
 
-  it('aborts when reconciliation fails', async () => {
+  it('aborts when reconciliation detects sign violation', async () => {
     const broken = JSON.stringify({
       ...JSON.parse(extractedItau),
-      closingBalanceCents: 999999,
+      transactions: [
+        { date: '2026-04-05', description: 'BUG', amountCents: 1000, kind: 'debit' },
+      ],
     });
     const mock = buildMock().on(EXTRACT_SYSTEM, () => broken);
 
@@ -103,6 +105,6 @@ describe('runPipeline', () => {
         inputs: [{ buffer: fakePdf, filename: 'extrato.pdf' }],
         incomeBracket: 'prefer_not_to_say',
       }),
-    ).rejects.toThrow(/reconcil/i);
+    ).rejects.toThrow(/debit transaction has positive amount/i);
   });
 });

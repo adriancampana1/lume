@@ -18,6 +18,7 @@ const EnvSchema = z.object({
     .default('info'),
   MAX_REPORTS_PER_DAY: z.coerce.number().int().min(0).default(0),
   MAINTENANCE_MODE: z.coerce.boolean().default(false),
+  USE_MOCK_LLM: z.coerce.boolean().default(false),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

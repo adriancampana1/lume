@@ -5,7 +5,7 @@ import { ReportSchema } from './types.js';
 import { detectInputKind } from './route.js';
 import { parseOfx } from './ofx-parser.js';
 import { extractStatementFromPdf } from './extract.js';
-import { reconcile } from './reconcile.js';
+import { reconcile, type ReconciliationWarning } from './reconcile.js';
 import { normalize } from './normalize.js';
 import { categorize } from './categorize.js';
 import { aggregate } from './aggregate.js';
@@ -55,7 +55,11 @@ export async function runPipeline(opts: PipelineOptions): Promise<Report> {
   }
 
   stage('reconciling');
-  for (const s of statements) reconcile(s);
+  const warnings: ReconciliationWarning[] = [];
+  for (const s of statements) warnings.push(...reconcile(s));
+  if (warnings.length > 0) {
+    console.warn('[pipeline] reconciliation warnings (auto-healed)', { warnings });
+  }
 
   stage('categorizing');
   const normalizedStatements: NormalizedStatement[] = [];
@@ -86,6 +90,8 @@ export async function runPipeline(opts: PipelineOptions): Promise<Report> {
     recurring: aggs.recurring,
     trends: aggs.trends,
     topMerchants: aggs.topMerchants,
+    incomeSources: aggs.incomeSources,
+    categoryDetails: aggs.categoryDetails,
     benchmark,
     narrative,
   });

@@ -5,6 +5,8 @@ import type {
   Trend,
   TopMerchant,
   CategorizedTransaction,
+  IncomeSource,
+  CategoryItem,
 } from './types.js';
 
 export type Aggregations = {
@@ -19,6 +21,8 @@ export type Aggregations = {
   recurring: Recurring[];
   trends: Trend[];
   topMerchants: TopMerchant[];
+  incomeSources: IncomeSource[];
+  categoryDetails: Record<Category, CategoryItem[]>;
 };
 
 const ALL_CATS: Category[] = [
@@ -154,6 +158,36 @@ export function aggregate(statements: NormalizedStatement[]): Aggregations {
     .sort((a, b) => b.totalCents - a.totalCents)
     .slice(0, 10);
 
+  const categoryDetails = emptyCatDetailsRecord();
+  for (const [desc, v] of merchTotals.entries()) {
+    categoryDetails[v.cat].push({
+      description: desc,
+      totalCents: v.totalCents,
+      occurrences: v.count,
+    });
+  }
+  for (const cat of ALL_CATS) {
+    categoryDetails[cat].sort((a, b) => b.totalCents - a.totalCents);
+    categoryDetails[cat] = categoryDetails[cat].slice(0, 4);
+  }
+
+  const incomeTotals = new Map<string, { totalCents: number; count: number }>();
+  for (const t of allTx) {
+    if (t.kind !== 'credit') continue;
+    const cur = incomeTotals.get(t.description) ?? { totalCents: 0, count: 0 };
+    cur.totalCents += Math.abs(t.amountCents);
+    cur.count += 1;
+    incomeTotals.set(t.description, cur);
+  }
+  const incomeSources: IncomeSource[] = [...incomeTotals.entries()]
+    .map(([description, v]) => ({
+      description,
+      totalCents: v.totalCents,
+      occurrences: v.count,
+    }))
+    .sort((a, b) => b.totalCents - a.totalCents)
+    .slice(0, 6);
+
   return {
     periodStart: statements.map((s) => s.periodStart).sort()[0]!,
     periodEnd: today,
@@ -166,5 +200,14 @@ export function aggregate(statements: NormalizedStatement[]): Aggregations {
     recurring,
     trends,
     topMerchants,
+    incomeSources,
+    categoryDetails,
   };
+}
+
+function emptyCatDetailsRecord(): Record<Category, CategoryItem[]> {
+  return Object.fromEntries(ALL_CATS.map((c) => [c, [] as CategoryItem[]])) as Record<
+    Category,
+    CategoryItem[]
+  >;
 }

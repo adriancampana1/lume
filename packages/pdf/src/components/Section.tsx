@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 
 type Props = {
   number: string;
@@ -10,10 +10,13 @@ type Props = {
 export function Section({ number, title, pageBreak = false, children }: Props) {
   return (
     <section className={pageBreak ? 'page-break' : ''}>
-      <h2 className="section-title">
-        <span className="num">{number}</span>
-        {title}
-      </h2>
+      <header className="section-head">
+        <span className="num">
+          <span>{number}</span>
+          <span className="dash">—</span>
+        </span>
+        <h2>{title}</h2>
+      </header>
       {children}
     </section>
   );

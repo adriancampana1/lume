@@ -18,28 +18,33 @@ const baseStmt: Statement = {
 };
 
 describe('reconcile', () => {
-  it('passes when totals match exactly', () => {
-    expect(() => reconcile(baseStmt)).not.toThrow();
+  it('returns no warnings when totals match exactly', () => {
+    expect(reconcile({ ...baseStmt })).toEqual([]);
   });
 
-  it('passes with debit total within 0.5% tolerance', () => {
+  it('returns no warnings with debit total within 0.5% tolerance', () => {
     const stmt = { ...baseStmt, declaredTotalDebitsCents: 30150 };
-    expect(() => reconcile(stmt)).not.toThrow();
+    expect(reconcile(stmt)).toEqual([]);
   });
 
-  it('throws when debit total off by more than 0.5%', () => {
+  it('warns and heals when debit total off by more than 0.5%', () => {
     const stmt = { ...baseStmt, declaredTotalDebitsCents: 31000 };
-    expect(() => reconcile(stmt)).toThrow(ReconciliationError);
+    const warnings = reconcile(stmt);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]!.code).toBe('debits_mismatch');
+    expect(stmt.declaredTotalDebitsCents).toBe(30000);
   });
 
-  it('passes when closing balance off by ≤ R$1 (100 cents)', () => {
+  it('returns no warnings when closing balance off by ≤ R$1 (100 cents)', () => {
     const stmt = { ...baseStmt, closingBalanceCents: 80050 };
-    expect(() => reconcile(stmt)).not.toThrow();
+    expect(reconcile(stmt)).toEqual([]);
   });
 
-  it('throws when closing balance off by > R$1', () => {
+  it('warns and heals when closing balance off by > R$1', () => {
     const stmt = { ...baseStmt, closingBalanceCents: 80250 };
-    expect(() => reconcile(stmt)).toThrow(ReconciliationError);
+    const warnings = reconcile(stmt);
+    expect(warnings.some((w) => w.code === 'balance_mismatch')).toBe(true);
+    expect(stmt.closingBalanceCents).toBe(80000);
   });
 
   it('throws if a debit transaction has positive amount', () => {

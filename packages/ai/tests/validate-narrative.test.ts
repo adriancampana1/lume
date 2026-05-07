@@ -25,6 +25,19 @@ const baseAggs: Aggregations = {
   recurring: [],
   trends: [],
   topMerchants: [],
+  incomeSources: [],
+  categoryDetails: {
+    moradia: [],
+    mercado: [],
+    restaurante: [],
+    transporte: [],
+    saude: [],
+    educacao: [],
+    lazer_e_hobby: [],
+    compras: [],
+    assinaturas_e_servicos: [],
+    transferencias_e_outros: [],
+  },
 };
 
 describe('buildAllowedNumbers', () => {

@@ -9,7 +9,7 @@ export function SectionIncome({ report, number }: Props) {
   const sources = report.incomeSources ?? [];
 
   return (
-    <Section number={number} title="Entradas" pageBreak>
+    <Section number={number} title="Entradas">
       <div className="body-prose" style={{ marginBottom: '6mm' }}>
         <p>
           Origens das receitas reconhecidas no período, ordenadas por valor.

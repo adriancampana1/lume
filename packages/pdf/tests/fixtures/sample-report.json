@@ -1,41 +1,119 @@
 {
   "periodStart": "2026-04-01",
   "periodEnd": "2026-04-30",
-  "transactionsCount": 4,
-  "totalSpentCents": 35000,
-  "totalReceivedCents": 500000,
+  "transactionsCount": 38,
+  "totalSpentCents": 642633,
+  "totalReceivedCents": 683981,
   "categories": {
-    "moradia": 0,
-    "mercado": 14550,
-    "restaurante": 0,
-    "transporte": 9440,
-    "saude": 0,
-    "educacao": 0,
-    "lazer_e_hobby": 0,
-    "compras": 0,
-    "assinaturas_e_servicos": 8990,
-    "transferencias_e_outros": 2020
+    "moradia": 204227,
+    "mercado": 132992,
+    "restaurante": 12207,
+    "transporte": 59711,
+    "saude": 22810,
+    "educacao": 22755,
+    "lazer_e_hobby": 27380,
+    "compras": 25998,
+    "assinaturas_e_servicos": 34808,
+    "transferencias_e_outros": 99745
   },
   "recurring": [
     {
       "description": "NETFLIX",
       "category": "assinaturas_e_servicos",
-      "averageAmountCents": 8990,
+      "averageAmountCents": 5390,
       "occurrencesPerMonth": 1,
-      "monthsSeen": 1,
+      "monthsSeen": 3,
       "status": "active",
-      "lastSeenDate": "2026-04-05"
-    }
-  ],
-  "trends": [],
-  "topMerchants": [
+      "lastSeenDate": "2026-04-09"
+    },
     {
-      "description": "PAO DE ACUCAR",
-      "category": "mercado",
-      "totalCents": 14550,
-      "occurrences": 1
+      "description": "WELLHUB",
+      "category": "lazer_e_hobby",
+      "averageAmountCents": 9999,
+      "occurrencesPerMonth": 1,
+      "monthsSeen": 3,
+      "status": "increasing",
+      "lastSeenDate": "2026-04-18"
+    },
+    {
+      "description": "ZAAPNET INTERNET",
+      "category": "assinaturas_e_servicos",
+      "averageAmountCents": 9900,
+      "occurrencesPerMonth": 1,
+      "monthsSeen": 3,
+      "status": "active",
+      "lastSeenDate": "2026-04-26"
     }
   ],
+  "trends": [
+    { "category": "transporte", "changePct": 0.31, "direction": "up" },
+    { "category": "lazer_e_hobby", "changePct": -0.18, "direction": "down" }
+  ],
+  "topMerchants": [
+    { "description": "MAGGI EMPREENDIMENTOS", "category": "moradia", "totalCents": 110000, "occurrences": 1 },
+    { "description": "CONDOMINIO INCANTO", "category": "moradia", "totalCents": 57227, "occurrences": 1 },
+    { "description": "XS5 CONSORCIOS", "category": "transferencias_e_outros", "totalCents": 49183, "occurrences": 1 }
+  ],
+  "incomeSources": [
+    { "description": "SALARIO ADRIAN", "totalCents": 226700, "occurrences": 1 },
+    { "description": "VALE ALIMENTACAO", "totalCents": 200000, "occurrences": 1 },
+    { "description": "SALARIO LETICIA", "totalCents": 170000, "occurrences": 1 },
+    { "description": "HELLEN MOREIRA", "totalCents": 35000, "occurrences": 1 },
+    { "description": "GOWD PAGAMENTOS", "totalCents": 22281, "occurrences": 1 },
+    { "description": "OUTROS PIX RECEBIDOS", "totalCents": 30000, "occurrences": 2 }
+  ],
+  "categoryDetails": {
+    "moradia": [
+      { "description": "MAGGI EMPREENDIMENTOS (aluguel)", "totalCents": 110000, "occurrences": 1 },
+      { "description": "CONDOMINIO INCANTO", "totalCents": 57227, "occurrences": 1 },
+      { "description": "JULIANA ROCHA (faxina)", "totalCents": 22000, "occurrences": 1 },
+      { "description": "DIVA SANCHEZ (faxina)", "totalCents": 15000, "occurrences": 1 }
+    ],
+    "mercado": [
+      { "description": "VALE ALIMENTACAO (uso)", "totalCents": 119700, "occurrences": 1 },
+      { "description": "ALMEIDA MERCADOS", "totalCents": 2798, "occurrences": 1 },
+      { "description": "MARCELOS CONVENIENCIA", "totalCents": 1249, "occurrences": 1 }
+    ],
+    "restaurante": [
+      { "description": "GERMANO'S PIZZARIA", "totalCents": 8290, "occurrences": 1 },
+      { "description": "GALPAO DA COSTELA", "totalCents": 2717, "occurrences": 1 },
+      { "description": "SORVETANO", "totalCents": 1200, "occurrences": 1 }
+    ],
+    "transporte": [
+      { "description": "CONTORNO NORTE (combustivel)", "totalCents": 40621, "occurrences": 2 },
+      { "description": "LOOVI (rastreador)", "totalCents": 18190, "occurrences": 1 },
+      { "description": "NIAD ESTACIONAMENTOS", "totalCents": 900, "occurrences": 1 }
+    ],
+    "saude": [
+      { "description": "P13 ESPACO LASER", "totalCents": 17468, "occurrences": 1 },
+      { "description": "FARMACIA MJCARE", "totalCents": 5342, "occurrences": 1 }
+    ],
+    "educacao": [
+      { "description": "EDITORA EDUCACIONAL", "totalCents": 22755, "occurrences": 1 }
+    ],
+    "lazer_e_hobby": [
+      { "description": "ODY PARK", "totalCents": 23000, "occurrences": 1 },
+      { "description": "SPOTIFY", "totalCents": 2390, "occurrences": 1 },
+      { "description": "PRIME VIDEO", "totalCents": 1990, "occurrences": 1 }
+    ],
+    "compras": [
+      { "description": "BARBEARIA BERNARDI", "totalCents": 6000, "occurrences": 1 },
+      { "description": "C GOULART E SILVA", "totalCents": 13400, "occurrences": 1 },
+      { "description": "SHOPEE", "totalCents": 1877, "occurrences": 1 }
+    ],
+    "assinaturas_e_servicos": [
+      { "description": "APPLE.COM/BILL", "totalCents": 10670, "occurrences": 3 },
+      { "description": "ZAAPNET TELECOM", "totalCents": 11883, "occurrences": 2 },
+      { "description": "ABACUS.AI", "totalCents": 5355, "occurrences": 1 },
+      { "description": "VIVO TELEFONIA", "totalCents": 5900, "occurrences": 1 }
+    ],
+    "transferencias_e_outros": [
+      { "description": "XS5 CONSORCIOS", "totalCents": 49183, "occurrences": 1 },
+      { "description": "PARCELAMENTO 3/6", "totalCents": 6470, "occurrences": 1 },
+      { "description": "CONGREGACAO CRISTA", "totalCents": 10000, "occurrences": 1 },
+      { "description": "GOV PR FAZENDA", "totalCents": 12120, "occurrences": 1 }
+    ]
+  },
   "benchmark": {
     "incomeBracket": "from_3k_to_6k",
     "reference": "POF/IBGE 2024",
@@ -53,16 +131,16 @@
     }
   },
   "narrative": {
-    "summary": "Em abril, você gastou R$ 350 no total — distribuídos em 4 transações. O saldo seguiu positivo.",
-    "whereTheMoneyWent": "Mercado liderou com R$ 145, seguido de transporte (R$ 94) e assinaturas (R$ 89).",
-    "trends": "Com apenas 1 mês de dado, ainda não temos tendência confiável.",
-    "recurring": "Identificamos NETFLIX como recorrente ativa.",
-    "benchmark": "Sua faixa gasta em média 16% com mercado.",
+    "summary": "Mês fechou positivo em R$ 413, com receita de R$ 6.840 contra R$ 6.426 em despesas. Moradia concentrou quase um terço dos gastos.",
+    "whereTheMoneyWent": "Moradia liderou (R$ 2.042), seguida de mercado (R$ 1.330) e transferências (R$ 997). Juntas representam 68% do total gasto.",
+    "trends": "Transporte subiu 31% no comparativo entre o primeiro e o último mês — combustível foi o motor. Lazer caiu 18%.",
+    "recurring": "Três recorrências ativas mapeadas: Netflix, Wellhub e internet Zaapnet. Wellhub está em tendência de alta.",
+    "benchmark": "Você gasta menos com moradia que a média da sua faixa, mas mais com transferências.",
     "recommendations": [
-      "Acompanhar a evolução de mercado nos próximos meses",
-      "Avaliar se NETFLIX continua sendo usado",
-      "Voltar com 2 meses adicionais para tendências"
+      "Reconstituir o fundo de emergência usado para a parcela do consórcio.",
+      "Revisar assinaturas Apple — três cobranças no mesmo mês podem ser revistas.",
+      "Avaliar se a alta em transporte é estrutural ou pontual antes de ajustar orçamento."
     ],
-    "nextSteps": "Gerar novo relatório em 30 dias com mais um extrato."
+    "nextSteps": "Volte com o extrato de maio para acompanhar a evolução das tendências e da reconstituição do fundo de emergência."
   }
 }

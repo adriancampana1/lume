@@ -279,11 +279,23 @@ reportsRoute.post('/generate/stream', requireAuth, async (c) => {
       );
       send({ event: 'completed', data: { reportId: result.reportId } });
     } catch (err) {
+      const e = err as Error & { code?: string; details?: unknown };
+      logger.error(
+        {
+          err: e.message,
+          code: e.code,
+          details: e.details,
+          stack: e.stack,
+          userId: user.id,
+          sessionId: parsed.data.sessionId,
+        },
+        'pipeline failed',
+      );
       send({
         event: 'error',
         data: {
-          code: (err as Error & { code?: string }).code ?? 'pipeline_failed',
-          message: (err as Error).message,
+          code: e.code ?? 'pipeline_failed',
+          message: e.message,
         },
       });
     }

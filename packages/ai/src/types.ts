@@ -74,6 +74,20 @@ export const TopMerchantSchema = z.object({
 });
 export type TopMerchant = z.infer<typeof TopMerchantSchema>;
 
+export const IncomeSourceSchema = z.object({
+  description: z.string(),
+  totalCents: z.number().int().nonnegative(),
+  occurrences: z.number().int().nonnegative(),
+});
+export type IncomeSource = z.infer<typeof IncomeSourceSchema>;
+
+export const CategoryItemSchema = z.object({
+  description: z.string(),
+  totalCents: z.number().int().nonnegative(),
+  occurrences: z.number().int().nonnegative(),
+});
+export type CategoryItem = z.infer<typeof CategoryItemSchema>;
+
 export const BenchmarkSchema = z.object({
   incomeBracket: z.string(),
   reference: z.literal('POF/IBGE 2024'),
@@ -104,6 +118,8 @@ export const AggregationsSchema = z.object({
   recurring: z.array(RecurringSchema),
   trends: z.array(TrendSchema),
   topMerchants: z.array(TopMerchantSchema),
+  incomeSources: z.array(IncomeSourceSchema),
+  categoryDetails: z.record(CategorySchema, z.array(CategoryItemSchema)),
 });
 
 export const ReportSchema = z.object({
@@ -116,6 +132,8 @@ export const ReportSchema = z.object({
   recurring: z.array(RecurringSchema),
   trends: z.array(TrendSchema),
   topMerchants: z.array(TopMerchantSchema),
+  incomeSources: z.array(IncomeSourceSchema).default([]),
+  categoryDetails: z.record(CategorySchema, z.array(CategoryItemSchema)).default({}),
   benchmark: BenchmarkSchema.nullable(),
   narrative: NarrativeSchema,
 });
