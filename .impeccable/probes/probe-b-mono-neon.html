@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lume — Probe B · Mono + Lime · Geist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(0.985 0.003 220);
+    --surface: oklch(1 0.001 220);
+    --ink: oklch(0.14 0.008 220);
+    --ink-2: oklch(0.42 0.006 220);
+    --ink-3: oklch(0.60 0.005 220);
+    --lime: oklch(0.86 0.21 130);
+    --lime-deep: oklch(0.30 0.09 130);
+    --lime-soft: oklch(0.96 0.06 130);
+    --border: oklch(0.92 0.005 220);
+    --border-strong: oklch(0.85 0.006 220);
+    --shadow: 0 1px 0 oklch(0.96 0.005 220 / 0.7), 0 8px 30px -16px oklch(0.10 0.005 220 / 0.18);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Geist", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; font-feature-settings: "ss01"; }
+
+  .frame-row { display: flex; gap: 32px; padding: 48px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+  .frame {
+    width: 390px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .frame-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 12px 4px; font-weight: 500; }
+  .screen { padding: 28px 24px 32px; }
+
+  /* Wordmark */
+  .wordmark {
+    display: inline-flex; align-items: baseline; gap: 1px;
+    font-weight: 600; font-size: 22px; letter-spacing: -0.04em;
+    color: var(--ink);
+    position: relative;
+  }
+  .wordmark::after {
+    content: "";
+    width: 9px; height: 4px;
+    background: var(--lime);
+    position: absolute;
+    bottom: 6px; right: -12px;
+    border-radius: 2px;
+    animation: blink 2.4s var(--ease-out-expo) infinite;
+  }
+  @keyframes blink {
+    0%, 100% { transform: scaleX(1); opacity: 1; }
+    50% { transform: scaleX(0.4); opacity: 0.5; }
+  }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-right: 8px; }
+  .topbar-link { font-size: 13px; color: var(--ink-2); text-decoration: none; font-weight: 500; letter-spacing: -0.005em; }
+
+  /* Hero */
+  .hero h1 {
+    font-size: 32px; line-height: 1.02; letter-spacing: -0.045em;
+    margin: 6px 0 14px; font-weight: 600;
+  }
+  .hero h1 .mark {
+    background: var(--lime);
+    color: var(--lime-deep);
+    padding: 0 6px; border-radius: 4px;
+    margin: 0 -2px;
+  }
+  .hero p {
+    font-size: 15px; line-height: 1.55; color: var(--ink-2); margin: 0 0 22px;
+    max-width: 32ch;
+  }
+
+  /* Step indicator */
+  .steps { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--ink-3); margin-bottom: 22px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--ink); color: var(--lime);
+    font-weight: 600; font-size: 11px;
+    font-family: "Geist Mono", monospace;
+  }
+  .step-line { flex: 1; height: 1px; background: var(--border); }
+  .step-num.muted { background: transparent; color: var(--ink-3); border: 1px solid var(--border-strong); }
+
+  /* Dropzone */
+  .dropzone {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 18px;
+    padding: 28px 20px;
+    text-align: center;
+    background: var(--bg);
+    transition: border-color 360ms var(--ease-out-expo), background 360ms var(--ease-out-expo);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .dropzone::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, var(--lime-soft), transparent 60%);
+    opacity: 0; transition: opacity 360ms var(--ease-out-expo);
+    pointer-events: none;
+  }
+  .dropzone:hover { border-color: var(--ink); }
+  .dropzone:hover::before { opacity: 1; }
+  .dropzone-icon {
+    width: 44px; height: 44px; margin: 0 auto 12px;
+    border-radius: 12px;
+    background: var(--ink); color: var(--lime);
+    display: grid; place-items: center;
+    position: relative; z-index: 1;
+  }
+  .dropzone-icon svg { width: 22px; height: 22px; }
+  .dropzone-title { font-size: 15px; font-weight: 600; letter-spacing: -0.018em; margin-bottom: 4px; position: relative; z-index: 1; }
+  .dropzone-hint { font-size: 12.5px; color: var(--ink-3); position: relative; z-index: 1; letter-spacing: -0.005em; }
+  .dropzone-hint b { color: var(--ink-2); font-weight: 500; font-family: "Geist Mono", monospace; font-size: 12px; }
+
+  /* Button */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 14px 20px;
+    background: var(--ink); color: var(--bg);
+    border: none; border-radius: 12px;
+    font: inherit; font-size: 15px; font-weight: 600; letter-spacing: -0.012em;
+    cursor: pointer; margin-top: 18px;
+    transition: transform 220ms var(--ease-out-expo), background 220ms var(--ease-out-expo);
+    position: relative; overflow: hidden;
+  }
+  .btn::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 60%, oklch(1 0 0 / 0.08));
+    pointer-events: none;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0) scale(0.985); }
+  .btn-dot {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--lime);
+    box-shadow: 0 0 12px var(--lime);
+    animation: dot 2.4s var(--ease-out-expo) infinite;
+  }
+  @keyframes dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.7); }
+  }
+  .btn-arrow { transition: transform 320ms var(--ease-out-expo); }
+  .btn:hover .btn-arrow { transform: translateX(3px); }
+
+  /* Privacy microcard */
+  .privacy {
+    margin-top: 22px;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .privacy-icon {
+    width: 28px; height: 28px; border-radius: 8px; flex: none;
+    background: var(--ink); color: var(--lime);
+    display: grid; place-items: center;
+  }
+  .privacy-icon svg { width: 14px; height: 14px; }
+  .privacy-text { font-size: 12.5px; line-height: 1.5; color: var(--ink-2); letter-spacing: -0.005em; }
+  .privacy-text b { color: var(--ink); font-weight: 600; }
+
+  /* Footer of probe */
+  .probe-label {
+    text-align: center; margin: 24px 0 0; padding: 0 16px;
+    font-size: 12px; color: var(--ink-3); letter-spacing: 0.04em;
+  }
+  .swatches { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+  .sw { width: 18px; height: 18px; border-radius: 999px; border: 1px solid oklch(0.85 0.005 220 / 0.4); }
+</style>
+</head>
+<body>
+  <div class="frame-row">
+    <div>
+      <p class="frame-label">PROBE B · MONO + LIME · GEIST</p>
+      <div class="frame">
+        <div class="screen">
+          <div class="topbar">
+            <span class="wordmark">lume</span>
+            <a href="#" class="topbar-link">entrar</a>
+          </div>
+
+          <div class="hero">
+            <h1>A <span class="mark">clareza</span> que faltava nas suas contas do mês.</h1>
+            <p>Suba seu extrato, receba um relatório mensal honesto. Gratuito, sem cadastro inicial, sem guardar seus dados.</p>
+          </div>
+
+          <div class="steps">
+            <span class="step-num">01</span>
+            <span style="color: var(--ink);">upload</span>
+            <span class="step-line"></span>
+            <span class="step-num muted">02</span>
+            <span class="step-line"></span>
+            <span class="step-num muted">03</span>
+          </div>
+
+          <div class="dropzone" tabindex="0" role="button" aria-label="Solte ou selecione seu extrato">
+            <div class="dropzone-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="m6 9 6-6 6 6"/><path d="M5 21h14"/></svg>
+            </div>
+            <div class="dropzone-title">Solte seu extrato aqui</div>
+            <div class="dropzone-hint">PDF ou OFX · até <b>6×</b> arquivos · <b>10MB</b> cada</div>
+          </div>
+
+          <button class="btn">
+            <span class="btn-dot" aria-hidden="true"></span>
+            Gerar minha análise
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+
+          <div class="privacy">
+            <div class="privacy-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="privacy-text">
+              <b>Zero retenção.</b> Seus extratos são analisados em memória e descartados ao fim da sessão. Nunca gravamos conteúdo financeiro.
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="probe-label">
+        Geist · geometric tech · OKLCH ink + lime
+        <div class="swatches">
+          <span class="sw" style="background: oklch(0.14 0.008 220);"></span>
+          <span class="sw" style="background: oklch(0.86 0.21 130);"></span>
+          <span class="sw" style="background: oklch(0.42 0.006 220);"></span>
+          <span class="sw" style="background: oklch(0.985 0.003 220);"></span>
+        </div>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

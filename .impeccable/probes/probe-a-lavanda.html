@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lume — Probe A · Lavanda + Inter Tight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(0.985 0.007 290);
+    --surface: oklch(1 0.004 290);
+    --text: oklch(0.18 0.025 285);
+    --text-2: oklch(0.46 0.02 285);
+    --text-3: oklch(0.62 0.015 285);
+    --primary: oklch(0.55 0.19 295);
+    --primary-hover: oklch(0.50 0.20 295);
+    --primary-soft: oklch(0.96 0.035 295);
+    --primary-ink: oklch(0.32 0.14 295);
+    --border: oklch(0.91 0.012 290);
+    --border-strong: oklch(0.84 0.018 290);
+    --shadow: 0 1px 0 oklch(0.95 0.01 290 / 0.6), 0 8px 24px -12px oklch(0.30 0.10 290 / 0.18);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Inter Tight", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
+  }
+  .frame-row { display: flex; gap: 32px; padding: 48px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+  .frame {
+    width: 390px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .frame-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 12px 4px; font-weight: 500; }
+  .screen { padding: 28px 24px 32px; }
+
+  /* Wordmark — feito à mão, não icon-pack */
+  .wordmark {
+    display: inline-flex; align-items: baseline; gap: 2px;
+    font-weight: 600; font-size: 22px; letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .wordmark-dot {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: var(--primary);
+    margin-left: 2px; transform: translateY(-9px);
+    animation: pulse 3.6s var(--ease-out-expo) infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: translateY(-9px) scale(1); }
+    50% { opacity: 0.55; transform: translateY(-9px) scale(0.85); }
+  }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+  .topbar-link { font-size: 13px; color: var(--text-2); text-decoration: none; font-weight: 500; }
+
+  /* Hero */
+  .hero h1 {
+    font-size: 32px; line-height: 1.05; letter-spacing: -0.035em;
+    margin: 8px 0 14px; font-weight: 600;
+  }
+  .hero h1 em {
+    font-style: normal; color: var(--primary);
+    font-weight: 600;
+    background: linear-gradient(0deg, var(--primary-soft) 0%, var(--primary-soft) 38%, transparent 38%);
+    padding: 0 4px; margin: 0 -4px;
+  }
+  .hero p {
+    font-size: 15px; line-height: 1.55; color: var(--text-2); margin: 0 0 24px;
+    max-width: 32ch;
+  }
+
+  /* Step indicator */
+  .steps { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); margin-bottom: 24px; font-weight: 500; }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 999px;
+    background: var(--primary); color: var(--surface);
+    font-weight: 600; font-size: 11px;
+    box-shadow: 0 0 0 4px var(--primary-soft);
+  }
+  .step-line { flex: 1; height: 1px; background: var(--border); }
+  .step-num.muted { background: var(--surface); color: var(--text-3); border: 1px solid var(--border-strong); box-shadow: none; }
+
+  /* Dropzone */
+  .dropzone {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 20px;
+    padding: 28px 20px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--bg), var(--surface));
+    transition: border-color 360ms var(--ease-out-expo), background 360ms var(--ease-out-expo);
+    cursor: pointer;
+    position: relative;
+  }
+  .dropzone:hover { border-color: var(--primary); background: linear-gradient(180deg, var(--primary-soft), var(--surface)); }
+  .dropzone-icon {
+    width: 44px; height: 44px; margin: 0 auto 12px;
+    border-radius: 14px;
+    background: var(--primary-soft);
+    display: grid; place-items: center;
+    color: var(--primary-ink);
+  }
+  .dropzone-icon svg { width: 22px; height: 22px; }
+  .dropzone-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .dropzone-hint { font-size: 12.5px; color: var(--text-3); }
+  .dropzone-hint b { color: var(--text-2); font-weight: 500; }
+
+  /* Button */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px 20px;
+    background: var(--primary); color: oklch(0.99 0.005 295);
+    border: none; border-radius: 14px;
+    font: inherit; font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
+    cursor: pointer; margin-top: 18px;
+    transition: transform 220ms var(--ease-out-expo), background 220ms var(--ease-out-expo), box-shadow 320ms var(--ease-out-expo);
+    box-shadow: 0 1px 0 oklch(0.42 0.16 295) inset, 0 6px 16px -8px oklch(0.45 0.18 295 / 0.6);
+  }
+  .btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 1px 0 oklch(0.40 0.16 295) inset, 0 10px 20px -8px oklch(0.45 0.18 295 / 0.7); }
+  .btn:active { transform: translateY(0) scale(0.985); }
+  .btn-arrow { transition: transform 320ms var(--ease-out-expo); }
+  .btn:hover .btn-arrow { transform: translateX(3px); }
+
+  /* Privacy microcard */
+  .privacy {
+    margin-top: 24px;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .privacy-icon {
+    width: 28px; height: 28px; border-radius: 8px; flex: none;
+    background: var(--primary-soft); color: var(--primary-ink);
+    display: grid; place-items: center;
+  }
+  .privacy-icon svg { width: 14px; height: 14px; }
+  .privacy-text { font-size: 12.5px; line-height: 1.5; color: var(--text-2); }
+  .privacy-text b { color: var(--text); font-weight: 600; }
+
+  /* Footer of probe (label) */
+  .probe-label {
+    text-align: center; margin: 24px 0 0; padding: 0 16px;
+    font-size: 12px; color: var(--text-3); letter-spacing: 0.04em;
+  }
+  .swatches { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+  .sw { width: 18px; height: 18px; border-radius: 999px; border: 1px solid oklch(0.85 0.01 290 / 0.4); }
+</style>
+</head>
+<body>
+  <div class="frame-row">
+    <div>
+      <p class="frame-label">PROBE A · LAVANDA · INTER TIGHT</p>
+      <div class="frame">
+        <div class="screen">
+          <div class="topbar">
+            <span class="wordmark">lume<span class="wordmark-dot"></span></span>
+            <a href="#" class="topbar-link">entrar</a>
+          </div>
+
+          <div class="hero">
+            <h1>A <em>clareza</em> que faltava nas suas contas do mês.</h1>
+            <p>Suba seu extrato, receba um relatório mensal honesto. Gratuito, sem cadastro inicial, sem guardar seus dados.</p>
+          </div>
+
+          <div class="steps">
+            <span class="step-num">1</span>
+            <span style="color: var(--text);">subir extrato</span>
+            <span class="step-line"></span>
+            <span class="step-num muted">2</span>
+            <span class="step-line"></span>
+            <span class="step-num muted">3</span>
+          </div>
+
+          <div class="dropzone" tabindex="0" role="button" aria-label="Solte ou selecione seu extrato">
+            <div class="dropzone-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="m6 9 6-6 6 6"/><path d="M5 21h14"/></svg>
+            </div>
+            <div class="dropzone-title">Solte seu extrato aqui</div>
+            <div class="dropzone-hint">PDF ou OFX · até <b>6 arquivos</b> · <b>10MB</b> cada</div>
+          </div>
+
+          <button class="btn">
+            Gerar minha análise
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+
+          <div class="privacy">
+            <div class="privacy-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="privacy-text">
+              <b>Zero retenção.</b> Seus extratos são analisados em memória e descartados ao fim da sessão. Nunca gravamos conteúdo financeiro.
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="probe-label">
+        Inter Tight · neo-grotesque warm · OKLCH lavanda
+        <div class="swatches">
+          <span class="sw" style="background: oklch(0.55 0.19 295);"></span>
+          <span class="sw" style="background: oklch(0.96 0.035 295);"></span>
+          <span class="sw" style="background: oklch(0.18 0.025 285);"></span>
+          <span class="sw" style="background: oklch(0.985 0.007 290);"></span>
+        </div>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
