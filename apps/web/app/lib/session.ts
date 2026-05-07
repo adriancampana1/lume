@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import type { Route } from 'next';
 import { SessionUserSchema, type SessionUser } from '@lume/shared';
-import { apiFetch } from './api.js';
+import { apiFetch } from './api-server.js';
 
 export async function getCurrentUser(): Promise<SessionUser | null> {
   const res = await apiFetch('/me');

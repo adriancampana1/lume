@@ -1,55 +1,337 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta — direção C: Quente Editorial */
-  --color-cream: #ede4d3;
-  --color-cream-dim: #d6c8b0;
-  --color-ink: #2b1d12;
-  --color-ink-soft: #5e4a35;
-  --color-terracotta: #b3441e;
-  --color-terracotta-dim: #8a3315;
+  /* === Surface === */
+  --color-bg: oklch(0.985 0.003 220);
+  --color-surface: oklch(1 0.001 220);
+  --color-surface-sunk: oklch(0.965 0.004 220);
 
-  /* Tipografia */
-  --font-serif: "Instrument Serif", Georgia, serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* === Ink === */
+  --color-ink: oklch(0.14 0.008 220);
+  --color-ink-2: oklch(0.42 0.006 220);
+  --color-ink-3: oklch(0.6 0.005 220);
+  --color-ink-inverse: oklch(0.985 0.003 220);
 
-  /* Radius padronizado */
-  --radius-pill: 100px;
-  --radius-card: 14px;
-  --radius-input: 8px;
+  /* === Accent · lime === */
+  --color-accent: oklch(0.86 0.21 130);
+  --color-accent-deep: oklch(0.3 0.09 130);
+  --color-accent-soft: oklch(0.96 0.06 130);
+  --color-accent-edge: oklch(0.76 0.18 130);
+
+  /* === Lines === */
+  --color-border: oklch(0.92 0.005 220);
+  --color-border-strong: oklch(0.85 0.006 220);
+  --color-border-ink: oklch(0.14 0.008 220);
+
+  /* === States === */
+  --color-danger: oklch(0.55 0.18 25);
+  --color-danger-soft: oklch(0.96 0.04 25);
+  --color-warn: oklch(0.72 0.15 75);
+  --color-warn-soft: oklch(0.97 0.04 75);
+
+  /* === Focus === */
+  --color-focus: oklch(0.86 0.21 130);
+
+  /* === Typography === */
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* === Type scale === */
+  --text-eyebrow: 0.6875rem;        /* 11px */
+  --text-caption: 0.75rem;          /* 12px */
+  --text-mono: 0.8125rem;           /* 13px */
+  --text-body-s: 0.84375rem;        /* 13.5px */
+  --text-body: 0.9375rem;           /* 15px */
+  --text-body-l: 1.0625rem;         /* 17px */
+  --text-h3: 1.125rem;              /* 18px */
+  --text-h2: 1.375rem;              /* 22px */
+  --text-h1: 1.75rem;               /* 28px */
+  --text-display-m: 2rem;           /* 32px → clamps */
+  --text-display-l: 2.5rem;         /* 40px → clamps */
+
+  /* === Radius === */
+  --radius-sheet: 28px;
+  --radius-card: 18px;
+  --radius-card-inner: 14px;
+  --radius-input: 10px;
+  --radius-btn: 12px;
+  --radius-pill: 999px;
+
+  /* === Easing === */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* === Elevation === */
+  --shadow-sheet: 0 1px 0 oklch(0.96 0.005 220 / 0.7), 0 8px 30px -16px oklch(0.1 0.005 220 / 0.18);
+  --shadow-lift: 0 1px 0 oklch(0.96 0.005 220 / 0.6), 0 12px 40px -18px oklch(0.1 0.005 220 / 0.22);
 }
 
+/* === Base === */
+
 @layer base {
+  *, *::before, *::after { box-sizing: border-box; }
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    color-scheme: light;
   }
   body {
-    background-color: var(--color-cream);
+    background-color: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11", "tnum";
+    font-size: var(--text-body);
+    line-height: 1.55;
+    letter-spacing: -0.01em;
   }
   ::selection {
-    background-color: var(--color-terracotta);
-    color: var(--color-cream);
+    background-color: var(--color-accent);
+    color: var(--color-accent-deep);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::placeholder {
+    color: var(--color-ink-3);
   }
 }
 
+/* === Type utilities === */
+
+.font-mono { font-family: var(--font-mono); font-feature-settings: "tnum", "ss01"; }
+
+.t-display-l {
+  font-size: clamp(2.5rem, 9vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+}
+.t-display-m {
+  font-size: clamp(2rem, 7vw, 3rem);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+.t-h1 {
+  font-size: var(--text-h1);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+.t-h2 {
+  font-size: var(--text-h2);
+  line-height: 1.18;
+  letter-spacing: -0.028em;
+  font-weight: 600;
+}
+.t-h3 {
+  font-size: var(--text-h3);
+  line-height: 1.25;
+  letter-spacing: -0.022em;
+  font-weight: 600;
+}
+.t-body-l {
+  font-size: var(--text-body-l);
+  line-height: 1.55;
+  letter-spacing: -0.012em;
+}
+.t-body-s {
+  font-size: var(--text-body-s);
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+}
+.t-caption {
+  font-size: var(--text-caption);
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--color-ink-3);
+}
+.t-eyebrow {
+  font-size: var(--text-eyebrow);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+@media (min-width: 768px) {
+  .t-h1 { font-size: 2.25rem; }
+  .t-h2 { font-size: 1.625rem; }
+  .t-h3 { font-size: 1.25rem; }
+  .t-body-l { font-size: 1.125rem; }
+  .t-body-s { font-size: 0.875rem; }
+}
+
+/* === Wordmark blink === */
+
+@keyframes lume-blink {
+  0%, 100% { transform: scaleX(1); opacity: 1; }
+  50% { transform: scaleX(0.4); opacity: 0.5; }
+}
+.lume-blink {
+  animation: lume-blink 2.4s var(--ease-out-expo) infinite;
+  transform-origin: left center;
+}
+
+/* === Status dot pulse (used in primary buttons) === */
+
+@keyframes lume-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.7); }
+}
+.lume-dot {
+  animation: lume-dot 2.4s var(--ease-out-expo) infinite;
+}
+
+/* === Reveal cascade === */
+
+@keyframes lume-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.lume-rise {
+  animation: lume-rise 720ms var(--ease-out-expo) both;
+}
+.lume-rise-1 { animation-delay: 60ms; }
+.lume-rise-2 { animation-delay: 140ms; }
+.lume-rise-3 { animation-delay: 220ms; }
+.lume-rise-4 { animation-delay: 320ms; }
+.lume-rise-5 { animation-delay: 420ms; }
+
+/* === Sticky CTA slide-up === */
+
+@keyframes lume-cta-up {
+  from { opacity: 0; transform: translateY(120%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.lume-cta-up {
+  animation: lume-cta-up 480ms var(--ease-out-expo) both;
+}
+
+/* === Accordion === */
+
 @keyframes accordion-down {
-  from { height: 0; opacity: 0 }
-  to { height: var(--radix-accordion-content-height); opacity: 1 }
+  from { height: 0; opacity: 0; }
+  to { height: var(--radix-accordion-content-height); opacity: 1; }
 }
 @keyframes accordion-up {
-  from { height: var(--radix-accordion-content-height); opacity: 1 }
-  to { height: 0; opacity: 0 }
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
 }
-.animate-accordion-down { animation: accordion-down 220ms cubic-bezier(0.16, 1, 0.3, 1) }
-.animate-accordion-up { animation: accordion-up 180ms cubic-bezier(0.7, 0, 0.84, 0) }
+.animate-accordion-down { animation: accordion-down 280ms var(--ease-out-expo); }
+.animate-accordion-up { animation: accordion-up 220ms var(--ease-out-expo); }
 
-.prose-lume h2 { font-family: var(--font-serif); font-style: italic; font-size: 1.5rem; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--color-ink); }
-.prose-lume h3 { font-weight: 500; font-size: 1.125rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-.prose-lume p { color: var(--color-ink); }
+/* === SSE step reveal === */
+
+@keyframes lume-step-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.lume-step-in {
+  animation: lume-step-in 320ms var(--ease-out-expo) both;
+}
+
+/* === Result reveal === */
+
+@keyframes lume-result {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.lume-result {
+  animation: lume-result 480ms var(--ease-out-expo) both;
+}
+
+/* === Prose for legal pages === */
+
+.prose-lume {
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--color-ink-2);
+  max-width: 65ch;
+}
+.prose-lume h2 {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  color: var(--color-ink);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+.prose-lume h2:first-child { margin-top: 0; }
+.prose-lume h3 {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  color: var(--color-ink);
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.prose-lume p { margin: 0; color: var(--color-ink-2); }
 .prose-lume p + p { margin-top: 1rem; }
-.prose-lume ul { list-style: disc; padding-left: 1.25rem; color: var(--color-ink); }
-.prose-lume li { margin-top: 0.25rem; }
-.prose-lume a { color: var(--color-terracotta); text-decoration: underline; text-underline-offset: 4px; }
+.prose-lume ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.prose-lume li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: var(--color-ink-2);
+}
+.prose-lume li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--color-border-strong);
+}
+.prose-lume a {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.prose-lume a:hover { text-decoration-color: var(--color-accent-edge); }
+.prose-lume strong { font-weight: 600; color: var(--color-ink); }
+.prose-lume code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-surface-sunk);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+
+/* === Numerals tabular === */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* === View transitions === */
+
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+/* === Reduced motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .lume-blink, .lume-dot { animation: none !important; opacity: 1 !important; transform: none !important; }
+}

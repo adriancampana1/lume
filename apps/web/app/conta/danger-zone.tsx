@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { Button } from '../components/primitives/button.js';
 
 export function DangerZone() {
   const [pendingExport, startExport] = useTransition();
@@ -46,63 +47,79 @@ export function DangerZone() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-6 border-b border-[var(--color-ink)]/10 pb-6">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 border-b border-[var(--color-border)] pb-6 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
-          <p className="text-sm font-medium text-[var(--color-ink)]">Exportar meus dados</p>
-          <p className="mt-1 text-xs text-[var(--color-ink-soft)]">
-            JSON com perfil, sessões e metadados de relatórios. Sem conteúdo financeiro
-            (não armazenamos).
+          <p className="t-body font-semibold text-[var(--color-ink)]">Exportar meus dados</p>
+          <p className="mt-1.5 max-w-[52ch] t-body-s text-[var(--color-ink-2)]">
+            JSON com perfil, sessões e metadados de relatórios. Sem conteúdo financeiro (não
+            armazenamos).
           </p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="md"
           onClick={() => void exportData()}
           disabled={pendingExport}
-          className="shrink-0 rounded-[var(--radius-pill)] border border-[var(--color-ink)]/20 bg-transparent px-5 py-2 text-sm text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]/60 disabled:opacity-60"
+          dot={false}
         >
           {pendingExport ? 'Gerando…' : 'Baixar'}
-        </button>
+        </Button>
       </div>
 
-      <div className="flex items-start justify-between gap-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
-          <p className="text-sm font-medium text-[var(--color-ink)]">Excluir minha conta</p>
-          <p className="mt-1 text-xs text-[var(--color-ink-soft)]">
-            Marca seu perfil como excluído imediatamente. Eliminação definitiva em 30 dias.
-            Esta ação não tem desfazer pelo app.
+          <p className="t-body font-semibold text-[var(--color-ink)]">Excluir minha conta</p>
+          <p className="mt-1.5 max-w-[52ch] t-body-s text-[var(--color-ink-2)]">
+            Marca seu perfil como excluído imediatamente. Eliminação definitiva em 30 dias. Esta
+            ação não tem desfazer pelo app.
           </p>
         </div>
         {confirmDelete ? (
           <div className="flex shrink-0 items-center gap-2">
-            <button
+            <Button
               type="button"
+              variant="destructive"
+              size="md"
               onClick={() => void deleteAccount()}
               disabled={pendingDelete}
-              className="rounded-[var(--radius-pill)] bg-[var(--color-terracotta)] px-5 py-2 text-sm font-medium text-[var(--color-cream)] hover:bg-[var(--color-terracotta-dim)] disabled:opacity-60"
+              dot={false}
             >
               {pendingDelete ? 'Excluindo…' : 'Confirmar'}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="md"
               onClick={() => setConfirmDelete(false)}
-              className="rounded-[var(--radius-pill)] px-3 py-2 text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+              dot={false}
             >
               Cancelar
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={() => setConfirmDelete(true)}
-            className="shrink-0 rounded-[var(--radius-pill)] border border-[var(--color-terracotta)]/40 bg-transparent px-5 py-2 text-sm text-[var(--color-terracotta)] transition-colors hover:border-[var(--color-terracotta)]"
+            dot={false}
+            className="border-[var(--color-danger)] text-[var(--color-danger)] hover:border-[var(--color-danger)]"
           >
             Excluir
-          </button>
+          </Button>
         )}
       </div>
 
-      {error && <p className="text-xs text-[var(--color-terracotta)]">{error}</p>}
+      {error ? (
+        <p
+          role="alert"
+          className="rounded-[var(--radius-input)] border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 t-body-s text-[var(--color-danger)]"
+        >
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

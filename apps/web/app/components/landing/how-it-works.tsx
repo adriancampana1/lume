@@ -4,33 +4,43 @@ export function HowItWorks() {
   const { title, steps } = copy.landing.howItWorks;
 
   return (
-    <section id="como-funciona" className="px-6 py-20 sm:px-10 sm:py-28">
-      <div className="mx-auto max-w-3xl">
-        <h2
-          className="mb-12 font-serif text-3xl tracking-tight sm:text-4xl"
-          style={{ fontFamily: 'var(--font-instrument-serif)' }}
-        >
-          {title}
-        </h2>
-        <ol className="space-y-10">
-          {steps.map((step, i) => (
-            <li key={i} className="flex gap-6">
-              <span
-                className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--color-ink)]/20 text-sm font-medium text-[var(--color-ink-soft)]"
+    <section id="como-funciona" className="relative px-5 py-20 sm:px-8 sm:py-28">
+      <div className="mx-auto max-w-[1120px]">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+          <header className="lg:col-span-4">
+            <span className="t-eyebrow">01 · como funciona</span>
+            <h2 className="mt-4 t-display-m text-[var(--color-ink)]" style={{ textWrap: 'balance' }}>
+              {title}.
+            </h2>
+            <p className="mt-4 max-w-[36ch] t-body text-[var(--color-ink-2)]">
+              Três passos. Nada de planilha, nada de categorizar à mão, nada de login no banco.
+            </p>
+          </header>
+
+          <ol className="lg:col-span-8 lg:pt-1.5">
+            {steps.map((step, i) => (
+              <li
+                key={step.title}
+                className="grid grid-cols-[auto_1fr] items-start gap-x-5 border-t border-[var(--color-border)] py-7 first:border-t-0 first:pt-0 sm:gap-x-8"
               >
-                {i + 1}
-              </span>
-              <div>
-                <h3 className="font-serif text-xl italic text-[var(--color-ink)]">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-base leading-relaxed text-[var(--color-ink-soft)]">
-                  {step.body}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
+                <span
+                  className="font-mono tabular text-[13px] font-semibold leading-[28px] text-[var(--color-ink-3)]"
+                  aria-hidden="true"
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h3 className="t-h2 text-[var(--color-ink)]" style={{ textWrap: 'balance' }}>
+                    {step.title}
+                  </h3>
+                  <p className="mt-2.5 max-w-[60ch] t-body text-[var(--color-ink-2)]">
+                    {step.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );

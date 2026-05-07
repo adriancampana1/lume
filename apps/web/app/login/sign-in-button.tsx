@@ -1,15 +1,18 @@
 'use client';
 
 import { useTransition } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '../components/primitives/button.js';
 
 type Props = { callbackUrl: string };
 
 export function SignInButton({ callbackUrl }: Props) {
   const [pending, start] = useTransition();
   return (
-    <button
+    <Button
       type="button"
       disabled={pending}
+      trailing={!pending ? <ArrowRight size={16} strokeWidth={2.4} /> : null}
       onClick={() =>
         start(async () => {
           const res = await fetch('/api/auth/csrf');
@@ -29,9 +32,8 @@ export function SignInButton({ callbackUrl }: Props) {
           form.submit();
         })
       }
-      className="mt-10 inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-ink)] px-7 py-3.5 text-sm font-medium text-[var(--color-cream)] transition-colors hover:bg-[var(--color-terracotta)] disabled:opacity-60"
     >
       {pending ? 'Indo pro Google…' : 'Entrar com Google'}
-    </button>
+    </Button>
   );
 }

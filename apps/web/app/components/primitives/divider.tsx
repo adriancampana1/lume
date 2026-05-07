@@ -1,3 +1,12 @@
-export function Divider() {
-  return <hr className="my-12 border-0 border-t border-[var(--color-ink)]/10" />;
+type Props = { className?: string; tone?: 'default' | 'strong' };
+
+export function Divider({ className = '', tone = 'default' }: Props) {
+  const color = tone === 'strong' ? 'bg-[var(--color-border-strong)]' : 'bg-[var(--color-border)]';
+  return (
+    <div
+      role="separator"
+      aria-orientation="horizontal"
+      className={`h-px w-full ${color} ${className}`}
+    />
+  );
 }

@@ -1,30 +1,3 @@
-import { headers } from 'next/headers';
-
-const apiBase = () => process.env['API_INTERNAL_URL'] ?? 'http://localhost:3001';
-
-export async function apiFetch(
-  path: string,
-  init: RequestInit = {},
-): Promise<Response> {
-  const incoming = await headers();
-  const cookie = incoming.get('cookie') ?? '';
-  return fetch(`${apiBase()}${path}`, {
-    ...init,
-    headers: {
-      ...(init.headers ?? {}),
-      ...(cookie ? { cookie } : {}),
-    },
-    cache: 'no-store',
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Client-side helpers (browser fetch, credentials: 'include')
-// ---------------------------------------------------------------------------
-
-const apiUrl = () =>
-  process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:3001';
-
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -38,7 +11,7 @@ export class ApiError extends Error {
 export async function uploadFiles(files: File[]): Promise<{ fileCount: number }> {
   const fd = new FormData();
   for (const f of files) fd.append('files', f, f.name);
-  const res = await fetch(`${apiUrl()}/sessions/upload`, {
+  const res = await fetch('/api/sessions/upload', {
     method: 'POST',
     body: fd,
     credentials: 'include',
@@ -51,7 +24,7 @@ export async function uploadFiles(files: File[]): Promise<{ fileCount: number }>
 }
 
 export async function ensureSession(): Promise<{ sessionId: string }> {
-  const res = await fetch(`${apiUrl()}/sessions`, {
+  const res = await fetch('/api/sessions', {
     method: 'POST',
     credentials: 'include',
   });
@@ -69,16 +42,30 @@ export async function streamReport(
   onEvent: (e: StreamEvent) => void,
   signal?: AbortSignal,
 ): Promise<void> {
-  const res = await fetch(`${apiUrl()}/reports/generate/stream`, {
-    method: 'POST',
-    body: JSON.stringify({ sessionId }),
-    headers: { 'content-type': 'application/json' },
-    credentials: 'include',
-    signal,
-  });
+  let res: Response;
+  try {
+    res = await fetch('/api/reports/generate/stream', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId }),
+      headers: { 'content-type': 'application/json' },
+      credentials: 'include',
+      signal,
+    });
+  } catch (err) {
+    if ((err as { name?: string }).name === 'AbortError') return;
+    onEvent({ type: 'error', code: 'network', message: 'stream_failed' });
+    return;
+  }
   if (res.status === 429) {
-    const body = (await res.json()) as { nextAvailableAt: string };
-    onEvent({ type: 'error', code: 'cap_reached', message: body.nextAvailableAt });
+    const body = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      nextAvailableAt?: string;
+    };
+    if (body.error === 'cap_reached') {
+      onEvent({ type: 'error', code: 'cap_reached', message: body.nextAvailableAt ?? '' });
+    } else {
+      onEvent({ type: 'error', code: 'rate_limited', message: 'stream_failed' });
+    }
     return;
   }
   if (!res.ok || !res.body) {
@@ -87,21 +74,26 @@ export async function streamReport(
   }
   const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
   let buffer = '';
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += value;
-    let idx;
-    while ((idx = buffer.indexOf('\n\n')) !== -1) {
-      const block = buffer.slice(0, idx);
-      buffer = buffer.slice(idx + 2);
-      const ev = block.match(/^event: (.+)$/m)?.[1] ?? 'message';
-      const dataLine = block.match(/^data: (.+)$/m);
-      if (!dataLine) continue;
-      const data = JSON.parse(dataLine[1]!) as Record<string, unknown>;
-      if (ev === 'stage') onEvent({ type: 'stage', ...data } as StreamEvent);
-      else if (ev === 'completed') onEvent({ type: 'completed', ...data } as StreamEvent);
-      else if (ev === 'error') onEvent({ type: 'error', ...data } as StreamEvent);
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += value;
+      let idx;
+      while ((idx = buffer.indexOf('\n\n')) !== -1) {
+        const block = buffer.slice(0, idx);
+        buffer = buffer.slice(idx + 2);
+        const ev = block.match(/^event: (.+)$/m)?.[1] ?? 'message';
+        const dataLine = block.match(/^data: (.+)$/m);
+        if (!dataLine) continue;
+        const data = JSON.parse(dataLine[1]!) as Record<string, unknown>;
+        if (ev === 'stage') onEvent({ type: 'stage', ...data } as StreamEvent);
+        else if (ev === 'completed') onEvent({ type: 'completed', ...data } as StreamEvent);
+        else if (ev === 'error') onEvent({ type: 'error', ...data } as StreamEvent);
+      }
     }
+  } catch (err) {
+    if ((err as { name?: string }).name === 'AbortError') return;
+    onEvent({ type: 'error', code: 'stream_read', message: 'stream_failed' });
   }
 }

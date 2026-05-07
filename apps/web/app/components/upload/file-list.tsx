@@ -10,26 +10,46 @@ function fmtBytes(n: number): string {
 export function FileList({ files, onRemove }: { files: File[]; onRemove: (i: number) => void }) {
   if (files.length === 0) return null;
   return (
-    <ul className="mt-6 divide-y divide-[var(--color-ink)]/10 rounded-[var(--radius-card)] border border-[var(--color-ink)]/10">
-      {files.map((f, i) => (
-        <li key={`${f.name}-${i}`} className="flex items-center justify-between gap-3 px-4 py-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <FileText size={18} className="shrink-0 text-[var(--color-terracotta)]" />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{f.name}</p>
-              <p className="text-xs text-[var(--color-ink-soft)]">{fmtBytes(f.size)}</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onRemove(i)}
-            className="rounded-full p-1.5 text-[var(--color-ink-soft)] transition-colors hover:bg-[var(--color-ink)]/5 hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)]"
-            aria-label="Remover arquivo"
+    <div className="mt-5">
+      <p className="t-eyebrow mb-2.5">
+        <span className="font-mono tabular">
+          {String(files.length).padStart(2, '0')}/06
+        </span>
+        <span className="ml-2">arquivos</span>
+      </p>
+      <ul className="overflow-hidden rounded-[var(--radius-card-inner)] border border-[var(--color-border)] bg-[var(--color-surface)] divide-y divide-[var(--color-border)]">
+        {files.map((f, i) => (
+          <li
+            key={`${f.name}-${i}`}
+            className="lume-step-in group grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-[var(--color-surface-sunk)]"
+            style={{ animationDelay: `${i * 60}ms` }}
           >
-            <X size={16} />
-          </button>
-        </li>
-      ))}
-    </ul>
+            <span
+              aria-hidden="true"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-[8px] border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-ink-2)]"
+            >
+              <FileText size={16} strokeWidth={1.8} />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate t-body-s font-medium text-[var(--color-ink)]">{f.name}</p>
+              <p className="font-mono tabular text-[12px] text-[var(--color-ink-3)]">
+                {fmtBytes(f.size)}
+              </p>
+            </div>
+            <span className="hidden font-mono tabular text-[11px] text-[var(--color-ink-3)] sm:inline">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <button
+              type="button"
+              onClick={() => onRemove(i)}
+              className="grid h-8 w-8 place-items-center rounded-[8px] text-[var(--color-ink-3)] transition-colors hover:bg-[var(--color-bg)] hover:text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+              aria-label={`Remover ${f.name}`}
+            >
+              <X size={15} strokeWidth={2} />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

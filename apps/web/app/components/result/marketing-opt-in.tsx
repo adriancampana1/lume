@@ -9,7 +9,7 @@ export function MarketingOptIn({ initial }: { initial: boolean }) {
   const onChange = async (checked: boolean) => {
     setValue(checked);
     setPending(true);
-    await fetch(`${process.env['NEXT_PUBLIC_API_URL']}/me`, {
+    await fetch('/api/me', {
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
       credentials: 'include',

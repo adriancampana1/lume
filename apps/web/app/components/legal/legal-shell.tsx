@@ -1,26 +1,30 @@
-import Link from 'next/link';
-import { Wordmark } from '../wordmark.js';
+import { PageShell } from '../page-shell.js';
 import { Footer } from '../landing/footer.js';
 
-export function LegalShell({ title, updatedAt, children }: { title: string; updatedAt: string; children: React.ReactNode }) {
+export function LegalShell({
+  title,
+  updatedAt,
+  children,
+}: {
+  title: string;
+  updatedAt: string;
+  children: React.ReactNode;
+}) {
   return (
     <>
-      <header className="px-6 pt-10 sm:px-10">
-        <div className="mx-auto max-w-3xl">
-          <Link href="/" className="inline-flex">
-            <Wordmark size="sm" />
-          </Link>
-        </div>
-      </header>
-      <main className="px-6 py-12 sm:px-10 sm:py-16">
-        <div className="mx-auto max-w-2xl">
-          <h1 className="font-serif text-4xl italic sm:text-5xl" style={{ fontFamily: 'var(--font-serif)' }}>
-            {title}
-          </h1>
-          <p className="mt-2 text-sm text-[var(--color-ink-soft)]">Atualizado em {updatedAt}</p>
-          <div className="prose-lume mt-10 space-y-6 text-base leading-relaxed text-[var(--color-ink)]">{children}</div>
-        </div>
-      </main>
+      <PageShell contentWidthClass="max-w-[720px]">
+        <p className="lume-rise t-eyebrow">documento legal</p>
+        <h1
+          className="lume-rise lume-rise-1 mt-3 t-display-m text-[var(--color-ink)]"
+          style={{ textWrap: 'balance' }}
+        >
+          {title}
+        </h1>
+        <p className="lume-rise lume-rise-2 mt-3 font-mono t-body-s text-[var(--color-ink-3)]">
+          atualizado em {updatedAt}
+        </p>
+        <div className="prose-lume lume-rise lume-rise-3 mt-12">{children}</div>
+      </PageShell>
       <Footer />
     </>
   );

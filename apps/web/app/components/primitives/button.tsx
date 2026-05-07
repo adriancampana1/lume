@@ -1,38 +1,71 @@
 'use client';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-[var(--radius-pill)] font-medium transition-[transform,background-color,color,box-shadow] duration-150 active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-cream)] disabled:opacity-50 disabled:pointer-events-none',
+  'group inline-flex items-center justify-center gap-2 rounded-[var(--radius-btn)] font-semibold tracking-[-0.012em] transition-[transform,background-color,color,border-color,box-shadow] duration-[220ms] ease-[var(--ease-out-expo)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] disabled:pointer-events-none disabled:text-[var(--color-ink-3)] disabled:bg-[var(--color-surface-sunk)] active:scale-[0.985] active:translate-y-0',
   {
     variants: {
       variant: {
         primary:
-          'bg-[var(--color-ink)] text-[var(--color-cream)] hover:bg-[var(--color-terracotta)]',
+          'bg-[var(--color-ink)] text-[var(--color-ink-inverse)] hover:-translate-y-px',
         secondary:
-          'bg-transparent text-[var(--color-ink)] underline-offset-[6px] underline decoration-1 hover:decoration-[var(--color-terracotta)] hover:text-[var(--color-terracotta)] rounded-none',
-        outline:
-          'border border-[var(--color-ink)]/20 text-[var(--color-ink)] hover:border-[var(--color-ink)] bg-transparent',
+          'bg-transparent text-[var(--color-ink)] border border-[var(--color-border)] hover:border-[var(--color-border-ink)] hover:-translate-y-px',
+        ghost:
+          'bg-transparent text-[var(--color-ink-2)] hover:text-[var(--color-ink)]',
+        destructive:
+          'bg-[var(--color-danger)] text-[var(--color-ink-inverse)] hover:-translate-y-px',
       },
       size: {
-        sm: 'h-10 px-4 text-sm',
-        md: 'h-12 px-6 text-base',
-        lg: 'h-14 px-8 text-lg',
+        sm: 'h-9 px-3.5 text-[13px]',
+        md: 'h-11 px-4 text-[14px]',
+        lg: 'h-[52px] px-5 text-[15px]',
+      },
+      block: {
+        true: 'w-full',
+        false: '',
       },
     },
-    defaultVariants: { variant: 'primary', size: 'md' },
+    defaultVariants: { variant: 'primary', size: 'lg', block: false },
   },
 );
 
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+    VariantProps<typeof buttonVariants> {
+  /** Show the lime indicator dot before the label (primary CTAs). Defaults true on primary. */
+  dot?: boolean;
+  /** Trailing slot — usually an arrow icon. */
+  trailing?: ReactNode;
+}
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className = '', variant, size, ...props },
+  { className = '', variant = 'primary', size, block, dot, trailing, children, ...props },
   ref,
 ) {
+  const showDot = dot ?? variant === 'primary';
   return (
-    <button ref={ref} className={`${buttonVariants({ variant, size })} ${className}`} {...props} />
+    <button
+      ref={ref}
+      className={`${buttonVariants({ variant, size, block })} ${className}`}
+      {...props}
+    >
+      {showDot ? (
+        <span
+          aria-hidden="true"
+          className="lume-dot inline-block h-[7px] w-[7px] rounded-full bg-[var(--color-accent)]"
+          style={{ boxShadow: '0 0 10px var(--color-accent)' }}
+        />
+      ) : null}
+      <span>{children}</span>
+      {trailing ? (
+        <span
+          aria-hidden="true"
+          className="inline-flex transition-transform duration-[320ms] ease-[var(--ease-out-expo)] group-hover:translate-x-[3px]"
+        >
+          {trailing}
+        </span>
+      ) : null}
+    </button>
   );
 });

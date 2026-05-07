@@ -1,7 +1,6 @@
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
-import { Wordmark } from '../components/wordmark.js';
+import { PageShell } from '../components/page-shell.js';
 import { Footer } from '../components/landing/footer.js';
 import { CapCard } from '../components/cap/cap-card.js';
 
@@ -25,18 +24,9 @@ export default async function CapPage() {
   const { me, cap } = await loadCap();
   return (
     <>
-      <header className="px-6 pt-10 sm:px-10">
-        <div className="mx-auto max-w-2xl">
-          <Link href="/" className="inline-flex">
-            <Wordmark size="sm" />
-          </Link>
-        </div>
-      </header>
-      <main className="px-6 py-12 sm:px-10 sm:py-16">
-        <div className="mx-auto max-w-2xl">
-          <CapCard daysLeft={cap.daysLeft} marketingInitial={Boolean(me.marketingOptIn)} />
-        </div>
-      </main>
+      <PageShell actions={[{ label: 'Minha conta', href: '/conta' }]}>
+        <CapCard daysLeft={cap.daysLeft} marketingInitial={Boolean(me.marketingOptIn)} />
+      </PageShell>
       <Footer />
     </>
   );

@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
+import { RotateCw } from 'lucide-react';
 import { Stepper } from './stepper.js';
+import { Button } from '../primitives/button.js';
 import { streamReport } from '../../lib/api.js';
 import { copy } from '../../lib/copy.js';
 
@@ -41,13 +43,15 @@ export function SseConsumer({ sessionId }: { sessionId: string }) {
     <div>
       <Stepper current={current} error={error} />
       {error ? (
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="mt-8 inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-ink)] px-8 text-base font-medium text-[var(--color-cream)] hover:bg-[var(--color-terracotta)]"
-        >
-          {copy.error.cta}
-        </button>
+        <div className="mt-8">
+          <Button
+            type="button"
+            onClick={() => window.location.reload()}
+            trailing={<RotateCw size={16} strokeWidth={2.4} />}
+          >
+            {copy.error.cta}
+          </Button>
+        </div>
       ) : null}
     </div>
   );

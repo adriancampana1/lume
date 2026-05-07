@@ -1,26 +1,37 @@
 'use client';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
-import { Wordmark } from '../components/wordmark.js';
+import { useCallback, useEffect, useState } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { PageShell } from '../components/page-shell.js';
+import { Stepper } from '../components/primitives/stepper.js';
+import { Button } from '../components/primitives/button.js';
 import { DropZone } from '../components/upload/drop-zone.js';
 import { FileList } from '../components/upload/file-list.js';
 import { BankInstructions } from '../components/upload/bank-instructions.js';
 import { copy } from '../lib/copy.js';
 import { ensureSession, uploadFiles } from '../lib/api.js';
 
+const STEPS = [{ label: 'enviar' }, { label: 'analisar' }, { label: 'receber' }];
+
 export default function UploadPage() {
-  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const onFiles = useCallback((incoming: File[]) => {
     setError(null);
-    setFiles((cur) => {
-      const merged = [...cur, ...incoming].slice(0, 6);
-      return merged;
-    });
+    setFiles((cur) => [...cur, ...incoming].slice(0, 6));
+  }, []);
+
+  useEffect(() => {
+    const prevent = (e: DragEvent) => {
+      if (e.dataTransfer?.types.includes('Files')) e.preventDefault();
+    };
+    window.addEventListener('dragover', prevent);
+    window.addEventListener('drop', prevent);
+    return () => {
+      window.removeEventListener('dragover', prevent);
+      window.removeEventListener('drop', prevent);
+    };
   }, []);
 
   const onRemove = (i: number) => setFiles((cur) => cur.filter((_, j) => j !== i));
@@ -35,8 +46,7 @@ export default function UploadPage() {
     try {
       await ensureSession();
       await uploadFiles(files);
-      const apiUrl = process.env['NEXT_PUBLIC_API_URL'] ?? '/api';
-      window.location.href = `${apiUrl}/auth/signin/google?callbackUrl=${encodeURIComponent('/processar')}`;
+      window.location.href = `/login?next=${encodeURIComponent('/processar')}`;
     } catch (err) {
       setError((err as Error).message);
       setPending(false);
@@ -44,43 +54,48 @@ export default function UploadPage() {
   };
 
   return (
-    <main className="min-h-screen px-6 py-10 sm:px-10 sm:py-16">
-      <header className="mx-auto max-w-3xl">
-        <Link href="/" className="inline-flex">
-          <Wordmark size="sm" />
-        </Link>
-      </header>
+    <PageShell>
+      <div className="lume-rise mb-8">
+        <Stepper steps={STEPS} current={0} />
+      </div>
 
-      <section className="mx-auto mt-10 max-w-3xl">
-        <h1 className="font-serif text-3xl italic sm:text-5xl" style={{ fontFamily: 'var(--font-serif)' }}>
-          {copy.upload.title}
-        </h1>
-        <p className="mt-3 text-base text-[var(--color-ink-soft)]">{copy.upload.subhead}</p>
+      <p className="lume-rise lume-rise-1 t-eyebrow">passo 01</p>
+      <h1
+        className="lume-rise lume-rise-2 mt-3 t-display-m text-[var(--color-ink)]"
+        style={{ textWrap: 'balance' }}
+      >
+        {copy.upload.title}
+      </h1>
+      <p className="lume-rise lume-rise-3 mt-4 max-w-[52ch] t-body-l text-[var(--color-ink-2)]">
+        {copy.upload.subhead}
+      </p>
 
-        <div className="mt-10">
-          <DropZone onFiles={onFiles} />
-          <FileList files={files} onRemove={onRemove} />
-          <BankInstructions />
-        </div>
+      <div className="lume-rise lume-rise-4 mt-10">
+        <DropZone onFiles={onFiles} onReject={setError} />
+        <FileList files={files} onRemove={onRemove} />
+        <BankInstructions />
+      </div>
 
-        {error ? (
-          <p className="mt-6 text-sm text-[var(--color-terracotta)]">{error}</p>
-        ) : null}
+      {error ? (
+        <p
+          role="alert"
+          className="mt-5 rounded-[var(--radius-input)] border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 t-body-s text-[var(--color-danger)]"
+        >
+          {error}
+        </p>
+      ) : null}
 
-        <div className="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
-          <button
-            type="button"
-            disabled={pending || files.length === 0}
-            onClick={submit}
-            className="inline-flex h-14 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-ink)] px-10 text-lg font-medium text-[var(--color-cream)] transition-colors hover:bg-[var(--color-terracotta)] disabled:opacity-50"
-          >
-            {pending ? 'Enviando…' : copy.upload.cta}
-          </button>
-          <p className="text-xs leading-relaxed text-[var(--color-ink-soft)] sm:max-w-md">
-            {copy.upload.legal}
-          </p>
-        </div>
-      </section>
-    </main>
+      <div className="lume-rise lume-rise-5 mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+        <Button
+          type="button"
+          disabled={pending || files.length === 0}
+          onClick={submit}
+          trailing={!pending ? <ArrowRight size={16} strokeWidth={2.4} /> : null}
+        >
+          {pending ? 'Enviando…' : copy.upload.cta}
+        </Button>
+        <p className="t-caption max-w-[44ch] text-[var(--color-ink-3)]">{copy.upload.legal}</p>
+      </div>
+    </PageShell>
   );
 }
