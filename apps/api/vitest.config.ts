@@ -8,4 +8,7 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     fileParallelism: false,
   },
+  esbuild: {
+    jsx: 'automatic',
+  },
 });
