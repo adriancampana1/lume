@@ -200,7 +200,7 @@ reportsRoute.post('/generate', requireAuth, async (c) => {
 
   if (await isGlobalCapReached()) {
     await db.insert(reportQueue).values({ userId: user.id, sessionId: parsed.data.sessionId, status: 'queued' });
-    try { await sendQueuedEmail(user.email); } catch { /* non-fatal */ }
+    try { await sendQueuedEmail({ to: user.email }); } catch { /* non-fatal */ }
     return c.json({ queued: true, message: 'Cap global atingido. Você receberá o relatório em algumas horas.' }, 202);
   }
 
@@ -260,7 +260,7 @@ reportsRoute.post('/generate/stream', requireAuth, async (c) => {
 
   if (await isGlobalCapReached()) {
     await db.insert(reportQueue).values({ userId: user.id, sessionId: parsed.data.sessionId, status: 'queued' });
-    try { await sendQueuedEmail(user.email); } catch { /* non-fatal */ }
+    try { await sendQueuedEmail({ to: user.email }); } catch { /* non-fatal */ }
     return c.json({ queued: true, message: 'Cap global atingido. Você receberá o relatório em algumas horas.' }, 202);
   }
 
