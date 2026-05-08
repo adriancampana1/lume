@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { sendReportEmail } from '../src/lib/email.js';
+import { sendReportEmail, sendQueuedEmail } from '../src/lib/email.js';
 
 const { sendMock } = vi.hoisted(() => ({ sendMock: vi.fn() }));
 
@@ -12,7 +12,7 @@ describe('sendReportEmail', () => {
     sendMock.mockReset();
   });
 
-  it('sends an email with PDF attachment to the user', async () => {
+  it('sends email with react component and PDF attachment', async () => {
     sendMock.mockResolvedValue({ data: { id: 'email-123' }, error: null });
 
     const pdf = Buffer.from('%PDF-fake');
@@ -27,6 +27,7 @@ describe('sendReportEmail', () => {
     const arg = sendMock.mock.calls[0]![0];
     expect(arg.to).toEqual(['user@test.lume']);
     expect(arg.subject).toContain('Lume');
+    expect(arg.react).toBeDefined();
     expect(arg.attachments?.[0]?.filename).toMatch(/\.pdf$/);
   });
 
@@ -40,5 +41,28 @@ describe('sendReportEmail', () => {
         reportId: 'r',
       }),
     ).rejects.toThrow(/rate_limit/);
+  });
+});
+
+describe('sendQueuedEmail', () => {
+  beforeEach(() => {
+    sendMock.mockReset();
+  });
+
+  it('sends queued email with react component', async () => {
+    sendMock.mockResolvedValue({ data: { id: 'email-456' }, error: null });
+
+    await sendQueuedEmail({ to: 'user@test.lume' });
+
+    expect(sendMock).toHaveBeenCalledOnce();
+    const arg = sendMock.mock.calls[0]![0];
+    expect(arg.to).toEqual(['user@test.lume']);
+    expect(arg.subject).toContain('Lume');
+    expect(arg.react).toBeDefined();
+  });
+
+  it('throws when resend returns an error', async () => {
+    sendMock.mockResolvedValue({ data: null, error: { message: 'quota_exceeded' } });
+    await expect(sendQueuedEmail({ to: 'a@b.c' })).rejects.toThrow(/quota_exceeded/);
   });
 });
