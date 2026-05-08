@@ -1,5 +1,7 @@
 import { Resend } from 'resend';
 import { env } from '../env.js';
+import { ReportEmail } from '../emails/report-email.js';
+import { QueuedEmail } from '../emails/queued-email.js';
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -10,20 +12,19 @@ export type SendReportEmailInput = {
   reportId: string;
 };
 
+export type SendQueuedEmailInput = {
+  to: string;
+};
+
 export async function sendReportEmail(input: SendReportEmailInput): Promise<void> {
   const filename = `lume-${input.reportId.slice(0, 8)}.pdf`;
+  const accountUrl = `${env.PUBLIC_BASE_URL}/conta`;
 
   const result = await resend.emails.send({
     from: env.EMAIL_FROM,
     to: [input.to],
     subject: `Seu relatório do mês está pronto · Lume`,
-    text:
-      `Oi,\n\n` +
-      `Seu relatório financeiro de ${input.period} está em anexo.\n\n` +
-      `Os arquivos originais que você enviou foram descartados ao final do processamento — ` +
-      `como prometido, sem retenção.\n\n` +
-      `Se quiser, baixe o PDF e guarde só na sua máquina. Não temos cópia.\n\n` +
-      `— Lume`,
+    react: <ReportEmail period={input.period} filename={filename} accountUrl={accountUrl} />,
     attachments: [
       {
         filename,
@@ -37,13 +38,16 @@ export async function sendReportEmail(input: SendReportEmailInput): Promise<void
   }
 }
 
-export async function sendQueuedEmail(email: string): Promise<void> {
+export async function sendQueuedEmail(input: SendQueuedEmailInput): Promise<void> {
+  const accountUrl = `${env.PUBLIC_BASE_URL}/conta`;
+
   const result = await resend.emails.send({
     from: env.EMAIL_FROM,
-    to: [email],
-    subject: 'Recebemos seu pedido · Lume',
-    html: `<p>Recebemos seu pedido de análise. Hoje atingimos o limite gratuito do dia, então seu relatório vai ser gerado e enviado por email em algumas horas.</p><p>Sem ação da sua parte.</p>`,
+    to: [input.to],
+    subject: `Recebemos seu pedido · Lume`,
+    react: <QueuedEmail accountUrl={accountUrl} />,
   });
+
   if (result.error) {
     throw new Error(`resend error: ${result.error.message}`);
   }
