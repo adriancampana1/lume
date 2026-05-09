@@ -53,7 +53,7 @@ export function ReportLayout({ report }: Props) {
     <html lang="pt-BR">
       <head>
         <meta charSet="utf-8" />
-        <title>Lume — {period}</title>
+        <title>Lume — ${period}</title>
         <style dangerouslySetInnerHTML={{ __html: PDF_STYLES }} />
       </head>
       <body>

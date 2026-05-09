@@ -9,6 +9,14 @@ import {
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { vi } from 'vitest';
+
+vi.mock('pdf-parse', () => ({
+  PDFParse: class {
+    constructor() {}
+    async getText() { return 'fake extract text'; }
+  }
+}));
 
 const fixturesDir = join(fileURLToPath(new URL('.', import.meta.url)), 'fixtures');
 

@@ -1,7 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { extractStatementFromPdf } from '../src/extract.js';
 import { buildMock } from './helpers/mock-llm.js';
 import { EXTRACT_SYSTEM } from '../src/prompts.js';
+
+vi.mock('pdf-parse', () => ({
+  PDFParse: class {
+    constructor() {}
+    async getText() { return 'fake extract text'; }
+  }
+}));
 
 describe('extractStatementFromPdf', () => {
   it('parses a valid JSON response from the LLM', async () => {

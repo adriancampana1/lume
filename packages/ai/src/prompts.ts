@@ -7,7 +7,7 @@ Regras inegociáveis:
 - Use kind="debit" se amountCents < 0, "credit" se >= 0.
 - bank ∈ {itau, nubank, inter, bb, bradesco, santander, caixa, unknown}.
 - Não invente transações. Se algo for ilegível, omita silenciosamente.
-- declaredTotalDebitsCents e declaredTotalCreditsCents devem refletir os totais declarados pelo extrato. Se o extrato não declara, some os valores das transações que você extraiu.
+- declaredTotalDebitsCents e declaredTotalCreditsCents devem refletir os totais declarados pelo extrato e DEVERÃO SER SEMPRE POSITIVOS (>= 0), mesmo para débitos. Se o extrato não declara, some o valor absoluto das transações extraídas.
 - openingBalanceCents e closingBalanceCents são os saldos inicial e final declarados.
 - Não inclua nenhum texto fora do JSON. Não inclua markdown.
 
@@ -28,7 +28,7 @@ type Statement = {
   }>;
 };`;
 
-export const EXTRACT_USER = 'Extraia o JSON do PDF anexado. Retorne apenas JSON válido.';
+export const EXTRACT_USER = 'Extraia o JSON a partir do texto do extrato fornecido. Ignore propagandas, cabeçalhos ou menus informativos que não façam parte da tabela de lançamentos. Retorne apenas JSON válido.';
 
 export const CATEGORIZE_SYSTEM = `Você categoriza descrições de transações bancárias brasileiras em uma das categorias fechadas:
 moradia, mercado, restaurante, transporte, saude, educacao, lazer_e_hobby, compras, assinaturas_e_servicos, transferencias_e_outros.
