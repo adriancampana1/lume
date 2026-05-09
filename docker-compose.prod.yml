@@ -31,7 +31,7 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?GOOGLE_CLIENT_SECRET is required}
       TMP_DIR: /tmp/lume
     ports:
-      - "127.0.0.1:3001:3001"
+      - "127.0.0.1:3007:3001"
     volumes:
       - lume-tmp:/tmp/lume
 
@@ -45,7 +45,7 @@ services:
       NEXT_PUBLIC_API_URL: ${PUBLIC_BASE_URL}/api
       API_INTERNAL_URL: http://api:3001
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3006:3000"
 
 volumes:
   postgres-data:
