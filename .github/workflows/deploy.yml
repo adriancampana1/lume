@@ -2,13 +2,16 @@ name: Deploy
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches:
+      - main
+    # Ou mantenha as tags "v*.*.*" se preferir aprovação manual, 
+    # mas o push do Docker precisa incluir a tag :latest
 
 env:
   REGISTRY: ghcr.io
-  API_IMAGE_NAME: ${{ github.repository }}-api
-  WEB_IMAGE_NAME: ${{ github.repository }}-web
+  # Adapte para o case-sensitive caso o docker reclame de repo com letra maiúscula
+  API_IMAGE_NAME: ${{ github.repository }}/api
+  WEB_IMAGE_NAME: ${{ github.repository }}/web
 
 jobs:
   build-and-push:
@@ -27,26 +30,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta-api
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}
-          
-      - name: Extract metadata (tags, labels) for Web
-        id: meta-web
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.WEB_IMAGE_NAME }}
-
       - name: Build and push API Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: apps/api/Dockerfile
           push: true
-          tags: ${{ steps.meta-api.outputs.tags }}
-          labels: ${{ steps.meta-api.outputs.labels }}
+          # O manual manda sobrescrever a :latest
+          tags: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}:latest
 
       - name: Build and push Web Docker image
         uses: docker/build-push-action@v5
@@ -54,25 +45,25 @@ jobs:
           context: .
           file: apps/web/Dockerfile
           push: true
-          tags: ${{ steps.meta-web.outputs.tags }}
-          labels: ${{ steps.meta-web.outputs.labels }}
+          # O manual manda sobrescrever a :latest
+          tags: ${{ env.REGISTRY }}/${{ env.WEB_IMAGE_NAME }}:latest
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout docker-compose.prod.yml
-        uses: actions/checkout@v4
-        
       - name: Execute remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}        # Mudando para o nome do manual
+          username: deploy                     # O usuário explicitado no manual
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /opt/lume
-            # pull the new images
-            docker-compose -f docker-compose.prod.yml pull
-            # restart
-            docker-compose -f docker-compose.prod.yml up -d
+            cd /opt/services/lume
+            
+            # Usar 'docker compose' (plugin) e não docker-compose legacy
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
+            
+            # Comando de faxina de disco (Capítulo 04)
+            docker image prune -f
