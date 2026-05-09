@@ -47,7 +47,7 @@ export function SectionBenchmark({ report, number }: Props) {
   }, 0);
 
   return (
-    <Section number={number} title="Comparativo com sua faixa" pageBreak>
+    <Section number={number} title="Comparativo com sua faixa">
       <div className="body-prose" style={{ marginBottom: '6mm' }}>
         <p>{report.narrative.benchmark}</p>
       </div>

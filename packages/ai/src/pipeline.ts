@@ -20,6 +20,7 @@ export type PipelineOptions = {
   inputs: PipelineInput[];
   incomeBracket: IncomeBracket;
   onStage?: (stage: PipelineStage) => void;
+  economyMode?: boolean;
 };
 
 export type PipelineStage =
@@ -34,24 +35,31 @@ async function ingestOne(
   llm: LlmClient,
   input: PipelineInput,
   onStage: (s: PipelineStage) => void,
+  economyMode: boolean,
 ): Promise<Statement> {
   const kind = detectInputKind(input.buffer, input.filename);
+  let statement: Statement;
   if (kind === 'ofx') {
-    onStage('anonymizing');
-    const anonText = anonymize(input.buffer.toString('utf8'));
-    return parseOfx(Buffer.from(anonText, 'utf8'));
+    statement = parseOfx(input.buffer);
+  } else {
+    onStage('extracting');
+    statement = await extractStatementFromPdf({ llm, pdf: input.buffer, filename: input.filename, economyMode });
   }
-  onStage('extracting');
-  const statement = await extractStatementFromPdf({ llm, pdf: input.buffer, filename: input.filename });
+
   onStage('anonymizing');
+  for (const t of statement.transactions) {
+    t.description = anonymize(t.description);
+  }
+
   return statement;
 }
 
 export async function runPipeline(opts: PipelineOptions): Promise<Report> {
   const stage = opts.onStage ?? (() => {});
+  const economyMode = opts.economyMode ?? false;
   const statements: Statement[] = [];
   for (const input of opts.inputs) {
-    statements.push(await ingestOne(opts.llm, input, stage));
+    statements.push(await ingestOne(opts.llm, input, stage, economyMode));
   }
 
   stage('reconciling');
@@ -78,6 +86,7 @@ export async function runPipeline(opts: PipelineOptions): Promise<Report> {
     llm: opts.llm,
     aggregations: aggs,
     benchmark,
+    economyMode,
   });
 
   return ReportSchema.parse({

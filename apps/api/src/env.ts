@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+const booleanEnv = z.preprocess((val) => {
+  if (val === undefined || val === '') return undefined;
+  if (typeof val === 'string') return val.toLowerCase() === 'true' || val === '1';
+  return Boolean(val);
+}, z.boolean().optional());
+
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3001),
@@ -17,8 +23,9 @@ const EnvSchema = z.object({
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
     .default('info'),
   MAX_REPORTS_PER_DAY: z.coerce.number().int().min(0).default(0),
-  MAINTENANCE_MODE: z.coerce.boolean().default(false),
-  USE_MOCK_LLM: z.coerce.boolean().default(false),
+  MAINTENANCE_MODE: booleanEnv.default(false),
+  USE_MOCK_LLM: booleanEnv.default(false),
+  LLM_ECONOMY_MODE: booleanEnv.default(true),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

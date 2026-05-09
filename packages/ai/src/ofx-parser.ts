@@ -26,9 +26,32 @@ function tagValuesAll(text: string, tag: string): string[] {
   return out;
 }
 
-function parseDate(yyyymmdd: string): string {
-  const s = yyyymmdd.replace(/[^0-9]/g, '').slice(0, 8);
-  return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
+function parseDate(raw: string): string {
+  // Strip OFX timezone suffix e.g. [-3:BRT] or [+5:30:IST]
+  const t = raw.trim().replace(/\[.*\]$/, '');
+  // OFX standard: YYYYMMDD[HHMMSS][TZ]
+  let m = /^(\d{4})(\d{2})(\d{2})/.exec(t);
+  if (m) {
+    const y = Number(m[1]);
+    if (y >= 1900 && y <= 2099) return `${m[1]}-${m[2]}-${m[3]}`;
+  }
+  // ISO: YYYY-MM-DD
+  m = /^(\d{4})-(\d{2})-(\d{2})/.exec(t);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  // BR slash: DD/MM/YYYY
+  m = /^(\d{2})\/(\d{2})\/(\d{4})/.exec(t);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  // BR compact: DDMMYYYY[HHMMSS]
+  m = /^(\d{2})(\d{2})(\d{4})/.exec(t);
+  if (m) {
+    const d = Number(m[1]);
+    const mo = Number(m[2]);
+    const y = Number(m[3]);
+    if (d >= 1 && d <= 31 && mo >= 1 && mo <= 12 && y >= 1900 && y <= 2099) {
+      return `${m[3]}-${m[2]}-${m[1]}`;
+    }
+  }
+  throw new Error(`OFX: unrecognized date format: ${JSON.stringify(raw)}`);
 }
 
 function parseAmountCents(s: string): number {

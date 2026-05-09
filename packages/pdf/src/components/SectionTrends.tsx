@@ -33,7 +33,7 @@ export function SectionTrends({ report, number }: Props) {
   );
 
   return (
-    <Section number={number} title="Tendências" pageBreak>
+    <Section number={number} title="Tendências">
       <div className="body-prose" style={{ marginBottom: '6mm' }}>
         <p>{report.narrative.trends}</p>
       </div>

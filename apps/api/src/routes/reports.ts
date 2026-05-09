@@ -95,6 +95,7 @@ export async function executeReport(
     inputs,
     incomeBracket,
     onStage,
+    economyMode: env.LLM_ECONOMY_MODE,
   });
 
   // Render PDF

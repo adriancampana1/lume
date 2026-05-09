@@ -24,7 +24,7 @@ export async function sendReportEmail(input: SendReportEmailInput): Promise<void
     from: env.EMAIL_FROM,
     to: [input.to],
     subject: `Seu relatório do mês está pronto · Lume`,
-    react: <ReportEmail period={input.period} filename={filename} accountUrl={accountUrl} />,
+    react: <ReportEmail period={input.period} accountUrl={accountUrl} />,
     attachments: [
       {
         filename,

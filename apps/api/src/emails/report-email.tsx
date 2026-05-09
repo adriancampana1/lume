@@ -1,15 +1,14 @@
-import { Section, Text, Hr } from '@react-email/components';
+import { Text } from '@react-email/components';
 import type { CSSProperties } from 'react';
 import { EmailLayout } from './layout.js';
-import { C, FONT_SANS, FONT_MONO } from './tokens.js';
+import { C, FONT_SANS } from './tokens.js';
 
 export type ReportEmailProps = {
   period: string;
-  filename: string;
   accountUrl: string;
 };
 
-export function ReportEmail({ period, filename, accountUrl }: ReportEmailProps) {
+export function ReportEmail({ period, accountUrl }: ReportEmailProps) {
   const eyebrow = period.replace(/\s+de\s+/i, ' · ').toUpperCase();
 
   return (
@@ -30,38 +29,6 @@ export function ReportEmail({ period, filename, accountUrl }: ReportEmailProps) 
       <Text style={{ ...bodyStyle, marginBottom: '0' }}>
         Os arquivos que você enviou foram descartados ao final do processamento — como prometido.
       </Text>
-
-      <Hr style={{ borderColor: C.border, borderTopWidth: '1px', margin: '20px 0' }} />
-
-      <Section
-        style={{
-          backgroundColor: C.bg,
-          border: `1px solid ${C.border}`,
-          borderRadius: '8px',
-          padding: '9px 13px',
-          maxWidth: '220px',
-        }}
-      >
-        <Text style={{ margin: '0', fontFamily: FONT_MONO, fontSize: '12px', fontWeight: 500, color: C.ink, letterSpacing: '-0.005em', lineHeight: '1.4' }}>
-          <span
-            style={{
-              display: 'inline-block',
-              backgroundColor: C.accent,
-              color: C.accentDeep,
-              fontSize: '8px',
-              fontWeight: 600,
-              fontFamily: FONT_SANS,
-              borderRadius: '4px',
-              padding: '2px 5px',
-              marginRight: '6px',
-              verticalAlign: 'middle',
-            }}
-          >
-            PDF
-          </span>
-          {filename}
-        </Text>
-      </Section>
     </EmailLayout>
   );
 }

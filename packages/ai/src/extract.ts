@@ -6,6 +6,7 @@ export type ExtractInput = {
   llm: LlmClient;
   pdf: Buffer;
   filename: string;
+  economyMode?: boolean;
 };
 
 function stripFences(s: string): string {
@@ -13,10 +14,11 @@ function stripFences(s: string): string {
 }
 
 export async function extractStatementFromPdf(input: ExtractInput): Promise<Statement> {
+  const economy = input.economyMode ?? false;
   const result = await input.llm.call({
-    model: 'claude-sonnet-4-6',
+    model: economy ? 'claude-haiku-4-5-20251001' : 'claude-sonnet-4-6',
     system: EXTRACT_SYSTEM,
-    maxTokens: 8000,
+    maxTokens: economy ? 4000 : 8000,
     temperature: 0,
     input: [
       { kind: 'pdf', data: input.pdf, filename: input.filename },

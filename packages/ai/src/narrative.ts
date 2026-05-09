@@ -9,6 +9,7 @@ export type ComposeInput = {
   llm: LlmClient;
   aggregations: Aggregations;
   benchmark: Benchmark | null;
+  economyMode?: boolean;
 };
 
 function stripFences(s: string): string {
@@ -52,12 +53,14 @@ function deterministicFallback(aggs: Aggregations): Narrative {
 
 export async function composeNarrative(input: ComposeInput): Promise<Narrative> {
   const ctx = buildContext(input.aggregations, input.benchmark);
+  const economy = input.economyMode ?? false;
+  const attempts = economy ? 1 : 2;
 
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const result = await input.llm.call({
-      model: 'claude-sonnet-4-6',
+      model: economy ? 'claude-haiku-4-5-20251001' : 'claude-sonnet-4-6',
       system: NARRATIVE_SYSTEM,
-      maxTokens: 3000,
+      maxTokens: economy ? 1500 : 3000,
       temperature: 0.3,
       input: [{ kind: 'text', text: ctx }],
     });
