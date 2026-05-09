@@ -126,8 +126,8 @@ export function aggregate(statements: NormalizedStatement[]): Aggregations {
     const firstM = monthlyByCategory[0]!;
     const lastM = monthlyByCategory[monthlyByCategory.length - 1]!;
     for (const cat of ALL_CATS) {
-      const a = firstM.byCategory[cat];
-      const b = lastM.byCategory[cat];
+      const a = firstM.byCategory[cat] ?? 0;
+      const b = lastM.byCategory[cat] ?? 0;
       if (a === 0 && b === 0) continue;
       const changePct = a === 0 ? 1 : (b - a) / a;
       const direction: Trend['direction'] =
@@ -160,15 +160,17 @@ export function aggregate(statements: NormalizedStatement[]): Aggregations {
 
   const categoryDetails = emptyCatDetailsRecord();
   for (const [desc, v] of merchTotals.entries()) {
-    categoryDetails[v.cat].push({
+    categoryDetails[v.cat]?.push({
       description: desc,
       totalCents: v.totalCents,
       occurrences: v.count,
     });
   }
   for (const cat of ALL_CATS) {
-    categoryDetails[cat].sort((a, b) => b.totalCents - a.totalCents);
-    categoryDetails[cat] = categoryDetails[cat].slice(0, 4);
+    if (categoryDetails[cat]) {
+      categoryDetails[cat].sort((a, b) => b.totalCents - a.totalCents);
+      categoryDetails[cat] = categoryDetails[cat].slice(0, 4);
+    }
   }
 
   const incomeTotals = new Map<string, { totalCents: number; count: number }>();
