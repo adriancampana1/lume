@@ -1,6 +1,6 @@
 # === BUILDER ===
 FROM node:22-bookworm-slim AS builder
-RUN corepack enable
+RUN npm install -g pnpm@9.12.0
 WORKDIR /repo
 
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.base.json ./
@@ -22,7 +22,7 @@ RUN pnpm --filter="@lume/api..." build
 
 # === RUNNER (with Playwright Chromium) ===
 FROM mcr.microsoft.com/playwright:v1.49.0-noble AS runner
-RUN corepack enable
+RUN npm install -g pnpm@9.12.0
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
