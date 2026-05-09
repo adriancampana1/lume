@@ -54,6 +54,8 @@ jobs:
 
       - run: pnpm --filter @lume/db db:migrate
 
+      - run: pnpm build
+
       - run: pnpm typecheck
 
       - run: pnpm lint
@@ -68,5 +70,3 @@ jobs:
           test -f apps/api/tests/pii-redact.test.ts
           test -f apps/api/tests/sweeper.test.ts
           test -f packages/ai/tests/reconcile.test.ts
-
-      - run: pnpm build

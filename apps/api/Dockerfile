@@ -18,7 +18,7 @@ COPY packages/ai ./packages/ai
 COPY packages/pdf ./packages/pdf
 COPY apps/api ./apps/api
 
-RUN pnpm --filter @lume/api build
+RUN pnpm --filter="@lume/api..." build
 
 # === RUNNER (with Playwright Chromium) ===
 FROM mcr.microsoft.com/playwright:v1.49.0-noble AS runner
