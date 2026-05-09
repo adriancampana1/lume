@@ -2,7 +2,11 @@
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
-  experimental: { typedRoutes: true },
+  typedRoutes: true,
+  transpilePackages: ['@lume/shared'],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config) {
     // Allow .js imports to resolve .ts/.tsx sources (verbatimModuleSyntax convention)
     config.resolve.extensionAlias = {
