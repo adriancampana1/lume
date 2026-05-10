@@ -31,7 +31,16 @@ export function SseConsumer({ sessionId }: { sessionId: string }) {
         else if (e.type === 'completed') router.push(`/resultado/${e.reportId}` as Route);
         else if (e.type === 'error') {
           if (e.code === 'cap_reached') router.push('/cap' as Route);
-          else setError(copy.error.body);
+          else if (
+            e.code === 'http_410' ||
+            e.code === 'http_404' ||
+            e.code === 'session_files_missing' ||
+            e.code === 'session_not_found'
+          ) {
+            router.push('/upload' as Route);
+          } else {
+            setError(copy.error.body);
+          }
         }
       },
       ctrl.signal,

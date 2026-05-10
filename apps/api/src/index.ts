@@ -58,7 +58,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
  *
  * RELATÓRIO:
  * - [X] MELHORAR PERFORMANCE DO PIPELINE (USO DE TOKENS, VELOCIDADE)
- * - [ ] MELHORAR NARRATIVA (USAR MAIS DADOS, EXPLICAÇÕES MELHORADAS, ETC)
+ * - [X] MELHORAR NARRATIVA (USAR MAIS DADOS, EXPLICAÇÕES MELHORADAS, ETC)
  * - [ ] DOWNLOAD DO RELATÓRIO EM PDF NO SITE DÁ ERRO "pdf_expired"
  * 
  * SITE:
@@ -66,7 +66,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
  * - [ ] ADICIONAR CURSOR POINTER NOS BOTÕES
  * - [ ] TESTAR FLUXO COMPLETO E CORRIGIR PROBLEMAS DE USABILIDADE E BUGS
  *
- * 
+ * - [ ] ARRUMAR CI/CD DE QUALITY
  *
  *
  *

@@ -176,16 +176,7 @@ sessionsRoute.get('/active', requireAuth, async (c) => {
   const user = c.get('user');
   if (!user) return c.json({ error: 'unauthorized' }, 401);
 
-  const [claimed] = await db
-    .select()
-    .from(uploadSessions)
-    .where(and(eq(uploadSessions.userId, user.id), eq(uploadSessions.status, 'pending')))
-    .orderBy(desc(uploadSessions.createdAt))
-    .limit(1);
-
-  if (claimed) return c.json({ sessionId: claimed.id, hasOnboarded: user.hasOnboarded });
-
-  // Try to claim anonymous session created before auth
+  // Try to claim anonymous session created before auth first
   const cookie = getCookie(c, ANON_COOKIE_NAME);
   if (cookie) {
     const verified = verifyValue(cookie, env.AUTH_SECRET);
@@ -213,6 +204,16 @@ sessionsRoute.get('/active', requireAuth, async (c) => {
       }
     }
   }
+
+  // Fallback to latest pending session already claimed by the user
+  const [claimed] = await db
+    .select()
+    .from(uploadSessions)
+    .where(and(eq(uploadSessions.userId, user.id), eq(uploadSessions.status, 'pending')))
+    .orderBy(desc(uploadSessions.createdAt))
+    .limit(1);
+
+  if (claimed) return c.json({ sessionId: claimed.id, hasOnboarded: user.hasOnboarded });
 
   return c.json({ error: 'no_session' }, 404);
 });
