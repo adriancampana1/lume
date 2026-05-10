@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import { headers } from 'next/headers';
 import { Download } from 'lucide-react';
+import { apiFetch } from '../../lib/api-server.js';
 import { PageShell } from '../../components/page-shell.js';
 import { Stepper } from '../../components/primitives/stepper.js';
 import { Button } from '../../components/primitives/button.js';
@@ -13,18 +13,22 @@ import { copy } from '../../lib/copy.js';
 const STEPS = [{ label: 'enviar' }, { label: 'analisar' }, { label: 'receber' }];
 
 async function loadReport(id: string) {
-  const h = await headers();
-  const cookie = h.get('cookie') ?? '';
-  const apiUrl = process.env['API_URL'] ?? 'http://localhost:3001';
-  const [reportRes, meRes] = await Promise.all([
-    fetch(`${apiUrl}/reports/${id}`, { headers: { cookie }, cache: 'no-store' }),
-    fetch(`${apiUrl}/me`, { headers: { cookie }, cache: 'no-store' }),
-  ]);
-  if (reportRes.status === 404) return null;
-  if (!reportRes.ok || !meRes.ok) throw new Error('result_load_failed');
-  const report = await reportRes.json();
-  const me = await meRes.json();
-  return { report, me };
+  try {
+    const [reportRes, meRes] = await Promise.all([
+      apiFetch(`/reports/${id}`),
+      apiFetch(`/me`),
+    ]);
+    if (reportRes.status === 404) return null;
+    if (!reportRes.ok || !meRes.ok) throw new Error('result_load_failed');
+    const report = await reportRes.json();
+    const me = await meRes.json();
+    return { report, me };
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ECONNREFUSED') {
+      console.error('Connection refused when connecting to API:', error);
+    }
+    throw error;
+  }
 }
 
 export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {

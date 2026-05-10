@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
+import { apiFetch } from '../lib/api-server.js';
 import { PageShell } from '../components/page-shell.js';
 import { Footer } from '../components/landing/footer.js';
 import { CapCard } from '../components/cap/cap-card.js';
@@ -7,12 +7,9 @@ import { CapCard } from '../components/cap/cap-card.js';
 export const metadata = { title: 'Cap atingido · Lume' };
 
 async function loadCap() {
-  const h = await headers();
-  const cookie = h.get('cookie') ?? '';
-  const apiUrl = process.env['API_URL'] ?? 'http://localhost:3001';
   const [meRes, capRes] = await Promise.all([
-    fetch(`${apiUrl}/me`, { headers: { cookie }, cache: 'no-store' }),
-    fetch(`${apiUrl}/me/cap`, { headers: { cookie }, cache: 'no-store' }),
+    apiFetch(`/me`),
+    apiFetch(`/me/cap`),
   ]);
   if (meRes.status === 401) redirect('/login');
   const me = await meRes.json();
