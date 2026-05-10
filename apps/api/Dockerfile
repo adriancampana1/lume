@@ -21,7 +21,7 @@ COPY apps/api ./apps/api
 RUN pnpm --filter="@lume/api..." build
 
 # === RUNNER (with Playwright Chromium) ===
-FROM mcr.microsoft.com/playwright:v1.49.0-noble AS runner
+FROM mcr.microsoft.com/playwright:v1.59.1-noble AS runner
 RUN npm install -g pnpm@9.12.0
 WORKDIR /app
 ENV NODE_ENV=production
