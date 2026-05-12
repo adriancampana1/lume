@@ -42,7 +42,7 @@ export function FileList({ files, onRemove }: { files: File[]; onRemove: (i: num
             <button
               type="button"
               onClick={() => onRemove(i)}
-              className="grid h-8 w-8 place-items-center rounded-[8px] text-[var(--color-ink-3)] transition-colors hover:bg-[var(--color-bg)] hover:text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+              className="grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[var(--color-ink-3)] transition-colors hover:bg-[var(--color-bg)] hover:text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
               aria-label={`Remover ${f.name}`}
             >
               <X size={15} strokeWidth={2} />

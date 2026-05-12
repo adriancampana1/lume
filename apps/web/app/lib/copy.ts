@@ -12,7 +12,7 @@ export const copy = {
       steps: [
         {
           title: 'Suba até 6 extratos',
-          body: 'PDF do app do seu banco ou OFX. Até 6 meses. Funciona com Itaú, Nubank, Inter, BB, Bradesco, Santander.',
+          body: 'PDF do app do seu banco ou OFX. Até 6 meses.',
         },
         {
           title: 'A gente lê e organiza',
@@ -70,7 +70,7 @@ export const copy = {
         { label: 'Termos', href: '/termos' },
         { label: 'Instagram do criador', href: 'https://instagram.com/' },
       ],
-      tagline: 'Feito por uma pessoa só, em São Paulo.',
+      tagline: 'Lume — clareza que cabe no bolso.',
     },
   },
   upload: {

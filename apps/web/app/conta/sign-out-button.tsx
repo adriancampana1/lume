@@ -21,7 +21,7 @@ export function SignOutButton() {
           window.location.href = '/';
         })
       }
-      className="t-eyebrow text-[var(--color-ink-2)] transition-colors duration-[200ms] ease-[var(--ease-out-expo)] hover:text-[var(--color-ink)] disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+      className="cursor-pointer t-eyebrow text-[var(--color-ink-2)] transition-colors duration-[200ms] ease-[var(--ease-out-expo)] hover:text-[var(--color-ink)] disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
     >
       {pending ? 'saindo…' : 'sair'}
     </button>

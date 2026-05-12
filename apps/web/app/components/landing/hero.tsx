@@ -3,7 +3,6 @@ import type { Route } from 'next';
 import { ArrowRight } from 'lucide-react';
 import { Wordmark } from '../wordmark.js';
 import { Button } from '../primitives/button.js';
-import { BancosRow } from './bancos-row.js';
 
 export function Hero() {
   return (
@@ -84,30 +83,36 @@ export function Hero() {
           <aside className="lume-rise lume-rise-5 lg:col-span-5">
             <div className="rounded-[var(--radius-sheet)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-sheet)] sm:p-7">
               <div className="flex items-center justify-between">
-                <span className="t-eyebrow">amostra · pág 01</span>
+                <span className="t-eyebrow">amostra · pág 02</span>
                 <span className="inline-flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-[var(--color-accent-soft)] px-2.5 py-1 t-eyebrow text-[var(--color-accent-deep)]">
                   pronto
                 </span>
               </div>
 
               <div className="mt-5">
-                <p className="t-eyebrow text-[var(--color-ink-3)]">
-                  resumo do período · abr/2026
-                </p>
-                <p className="mt-2 t-h2 text-[var(--color-ink)]" style={{ textWrap: 'balance' }}>
-                  Você gastou <span className="font-mono tabular text-[var(--color-ink)]">R$ 8.412</span> em abril, 9% acima de março.
+                <p className="t-eyebrow text-[var(--color-ink-3)]">resumo do período · abr/2026</p>
+                <p className="mt-2.5 text-[15px] leading-snug text-[var(--color-ink-2)]">
+                  Você fechou abril no positivo, com saídas 9% acima de março; mercado e restaurante concentraram 36% das despesas.
                 </p>
               </div>
 
-              <ul className="mt-5 flex flex-col gap-3 border-t border-[var(--color-border)] pt-4">
-                <SampleRow label="mercado" pct="22%" trend="+6%" />
-                <SampleRow label="restaurante" pct="14%" trend="+11%" />
-                <SampleRow label="transporte" pct="9%" trend="−3%" />
-                <SampleRow label="assinaturas" pct="7%" trend="0%" muted />
+              <div className="mt-5 flex flex-col gap-2.5">
+                <SampleFlowRow label="entradas" amount="R$ 9.240" barPct={100} />
+                <SampleFlowRow label="saídas" amount="R$ 8.412" barPct={91} />
+                <div className="flex items-baseline justify-between border-t border-[var(--color-border)] pt-2.5">
+                  <span className="t-eyebrow">sobrou no período</span>
+                  <span className="font-mono tabular text-[13px] font-semibold text-[var(--color-ink)]">+ R$ 828</span>
+                </div>
+              </div>
+
+              <ul className="mt-5 flex flex-col gap-2.5 border-t border-[var(--color-border)] pt-4">
+                <SampleCategoryRow label="mercado" amount="R$ 1.851" pct={22} maxPct={22} />
+                <SampleCategoryRow label="restaurante" amount="R$ 1.178" pct={14} maxPct={22} />
+                <SampleCategoryRow label="transporte" amount="R$ 757" pct={9} maxPct={22} />
               </ul>
 
-              <p className="mt-4 t-caption">
-                3 categorias respondem por <span className="font-mono">45%</span> do mês.
+              <p className="mt-3.5 t-caption">
+                saídas por categoria · 3 de 9 mostradas
               </p>
             </div>
 
@@ -117,39 +122,48 @@ export function Hero() {
           </aside>
         </div>
 
-        <div className="lume-rise lume-rise-5 mt-16 sm:mt-24">
-          <BancosRow />
-        </div>
-
         <div id="hero-sentinel" aria-hidden="true" className="h-px w-full" />
       </div>
     </section>
   );
 }
 
-function SampleRow({
+function SampleFlowRow({ label, amount, barPct }: { label: string; amount: string; barPct: number }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="t-eyebrow">{label}</span>
+        <span className="font-mono tabular text-[13px] text-[var(--color-ink)]">{amount}</span>
+      </div>
+      <div className="h-[3px] w-full overflow-hidden rounded-full bg-[var(--color-border)]">
+        <div className="h-[3px] rounded-full bg-[var(--color-ink)]" style={{ width: `${barPct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function SampleCategoryRow({
   label,
+  amount,
   pct,
-  trend,
-  muted,
+  maxPct,
 }: {
   label: string;
-  pct: string;
-  trend: string;
-  muted?: boolean;
+  amount: string;
+  pct: number;
+  maxPct: number;
 }) {
-  const trendColor = trend.startsWith('+')
-    ? 'text-[var(--color-ink)]'
-    : trend.startsWith('−')
-      ? 'text-[var(--color-ink-2)]'
-      : 'text-[var(--color-ink-3)]';
+  const barWidth = (pct / maxPct) * 100;
   return (
-    <li className="grid grid-cols-[1fr_auto_auto] items-baseline gap-3 t-body-s">
-      <span className={muted ? 'text-[var(--color-ink-3)]' : 'text-[var(--color-ink)]'}>
-        {label}
-      </span>
-      <span className="font-mono tabular text-[var(--color-ink-2)]">{pct}</span>
-      <span className={`font-mono tabular text-[12px] ${trendColor}`}>{trend}</span>
+    <li className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-[1fr_auto_auto] items-baseline gap-3 t-body-s">
+        <span className="text-[var(--color-ink)]">{label}</span>
+        <span className="font-mono tabular text-[var(--color-ink-2)]">{amount}</span>
+        <span className="font-mono tabular text-[12px] text-[var(--color-ink-3)]">{pct}%</span>
+      </div>
+      <div className="h-[3px] w-full overflow-hidden rounded-full bg-[var(--color-border)]">
+        <div className="h-[3px] rounded-full bg-[var(--color-ink)]" style={{ width: `${barWidth}%` }} />
+      </div>
     </li>
   );
 }

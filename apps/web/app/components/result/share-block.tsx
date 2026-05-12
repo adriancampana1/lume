@@ -20,7 +20,7 @@ export function ShareBlock() {
       <button
         type="button"
         onClick={onCopy}
-        className="mt-5 inline-flex h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--color-border-strong)] bg-transparent px-4 t-body-s font-semibold text-[var(--color-ink)] transition-[transform,border-color] duration-[220ms] ease-[var(--ease-out-expo)] hover:-translate-y-px hover:border-[var(--color-border-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+        className="mt-5 inline-flex h-11 cursor-pointer items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--color-border-strong)] bg-transparent px-4 t-body-s font-semibold text-[var(--color-ink)] transition-[transform,border-color] duration-[220ms] ease-[var(--ease-out-expo)] hover:-translate-y-px hover:border-[var(--color-border-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
       >
         <span
           aria-hidden="true"

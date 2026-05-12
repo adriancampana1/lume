@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk git *)",
+      "Bash(node *)",
+      "Bash(xargs grep -l \"relatório\\\\|report\\\\|exemplo\\\\|preview\\\\|sample\")",
+      "Bash(xargs grep -l \"pdf\\\\|PDF\\\\|relatorio\\\\|relatório\")",
+      "Bash(rtk grep *)",
+      "Bash(rtk tsc *)"
+    ]
+  }
+}
