@@ -6,7 +6,9 @@
       "Bash(xargs grep -l \"relatório\\\\|report\\\\|exemplo\\\\|preview\\\\|sample\")",
       "Bash(xargs grep -l \"pdf\\\\|PDF\\\\|relatorio\\\\|relatório\")",
       "Bash(rtk grep *)",
-      "Bash(rtk tsc *)"
+      "Bash(rtk tsc *)",
+      "Bash(Get-Content \"D:\\\\projetos\\\\pessoais\\\\lume\\\\apps\\\\api\\\\package.json\")",
+      "Bash(Select-String \"@hono/auth-js|@auth/core\")"
     ]
   }
 }
