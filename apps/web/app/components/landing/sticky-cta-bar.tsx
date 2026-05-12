@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import type { Route } from 'next';
+
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -32,7 +32,7 @@ export function StickyCtaBar() {
           1 mês <span className="text-[var(--color-ink)]">basta pra começar</span>.
         </p>
         <Link
-          href={'/upload' as Route}
+          href="/upload"
           className="group inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-btn)] bg-[var(--color-ink)] px-4 t-body-s font-semibold text-[var(--color-ink-inverse)] transition-transform duration-[220ms] ease-[var(--ease-out-expo)] active:scale-[0.985]"
         >
           <span

@@ -15,7 +15,6 @@ export function Stepper({ steps, current }: Props) {
       {steps.map((step, i) => {
         const isActive = i === current;
         const isDone = i < current;
-        const isUpcoming = i > current;
         return (
           <li key={step.label} className="flex flex-1 items-center gap-2 last:flex-none">
             <span

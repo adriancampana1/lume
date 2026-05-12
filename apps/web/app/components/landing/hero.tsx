@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import type { Route } from 'next';
 import { ArrowRight } from 'lucide-react';
 import { Wordmark } from '../wordmark.js';
 import { Button } from '../primitives/button.js';
@@ -26,7 +25,7 @@ export function Hero() {
               Privacidade
             </a>
             <Link
-              href={'/login' as Route}
+              href="/login"
               className="ml-1 inline-flex h-10 items-center rounded-[var(--radius-btn)] px-3 t-body-s font-medium text-[var(--color-ink-2)] transition-colors hover:text-[var(--color-ink)]"
             >
               Entrar
@@ -60,7 +59,7 @@ export function Hero() {
             </p>
 
             <div className="lume-rise lume-rise-4 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-              <Link href={'/upload' as Route} className="inline-flex">
+              <Link href="/upload" className="inline-flex">
                 <Button trailing={<ArrowRight size={16} strokeWidth={2.4} />}>
                   Gerar minha análise
                 </Button>

@@ -37,7 +37,7 @@ export function IncomeForm() {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-6">
+    <form onSubmit={(e) => { void submit(e); }} className="space-y-6">
       <fieldset className="space-y-3">
         <legend className="t-h3 text-[var(--color-ink)]">{copy.onboarding.question}</legend>
         <p className="t-body-s text-[var(--color-ink-2)]">{copy.onboarding.helper}</p>

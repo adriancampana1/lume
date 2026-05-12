@@ -6,14 +6,17 @@ import { CapCard } from '../components/cap/cap-card.js';
 
 export const metadata = { title: 'Cap atingido · Lume' };
 
+interface MeResponse { marketingOptIn: boolean }
+interface CapResponse { daysLeft: number }
+
 async function loadCap() {
   const [meRes, capRes] = await Promise.all([
     apiFetch(`/me`),
     apiFetch(`/me/cap`),
   ]);
   if (meRes.status === 401) redirect('/login');
-  const me = await meRes.json();
-  const cap = capRes.ok ? await capRes.json() : { daysLeft: 0 };
+  const me = (await meRes.json()) as MeResponse;
+  const cap = capRes.ok ? (await capRes.json()) as CapResponse : { daysLeft: 0 };
   return { me, cap };
 }
 

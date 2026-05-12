@@ -10,6 +10,9 @@ import { MarketingOptIn } from '../../components/result/marketing-opt-in.js';
 import { FollowCta } from '../../components/result/follow-cta.js';
 import { copy } from '../../lib/copy.js';
 
+interface MeResponse { email: string; marketingOptIn: boolean }
+interface ReportResponse { id: string }
+
 const STEPS = [{ label: 'enviar' }, { label: 'analisar' }, { label: 'receber' }];
 
 async function loadReport(id: string) {
@@ -20,8 +23,8 @@ async function loadReport(id: string) {
     ]);
     if (reportRes.status === 404) return null;
     if (!reportRes.ok || !meRes.ok) throw new Error('result_load_failed');
-    const report = await reportRes.json();
-    const me = await meRes.json();
+    const report = (await reportRes.json()) as ReportResponse;
+    const me = (await meRes.json()) as MeResponse;
     return { report, me };
   } catch (error) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'ECONNREFUSED') {

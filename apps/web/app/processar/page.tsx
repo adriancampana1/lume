@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Route } from 'next';
 import { PageShell } from '../components/page-shell.js';
 import { Stepper } from '../components/primitives/stepper.js';
 import { SseConsumer } from '../components/processing/sse-consumer.js';
@@ -15,17 +14,17 @@ export default function ProcessPage() {
   useEffect(() => {
     void fetch('/api/sessions/active', { credentials: 'include' })
       .then(async (r) => {
-        if (r.status === 401) router.push('/upload' as Route);
+        if (r.status === 401) router.push('/upload');
         else if (r.ok) {
           const b = (await r.json()) as { sessionId: string; hasOnboarded: boolean };
           if (!b.hasOnboarded) {
-            router.push('/onboarding?next=/processar' as Route);
+            router.push('/onboarding?next=/processar');
           } else {
             setSessionId(b.sessionId);
           }
-        } else router.push('/upload' as Route);
+        } else router.push('/upload');
       })
-      .catch(() => router.push('/upload' as Route));
+      .catch(() => router.push('/upload'));
   }, [router]);
 
   return (

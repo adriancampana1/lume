@@ -89,7 +89,7 @@ export default function UploadPage() {
         <Button
           type="button"
           disabled={pending || files.length === 0}
-          onClick={submit}
+          onClick={() => { void submit(); }}
           trailing={!pending ? <ArrowRight size={16} strokeWidth={2.4} /> : null}
         >
           {pending ? 'Enviando…' : copy.upload.cta}

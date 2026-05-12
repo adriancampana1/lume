@@ -41,7 +41,7 @@ export function CapCard({
         <p className="t-eyebrow mb-3">opt-in marketing</p>
         <Checkbox
           checked={opt}
-          onCheckedChange={(v) => onChange(v === true)}
+          onCheckedChange={(v) => { void onChange(v === true); }}
           label={copy.cap.marketing}
         />
       </div>

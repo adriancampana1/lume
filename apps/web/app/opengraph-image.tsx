@@ -5,7 +5,7 @@ export const alt = 'Lume — A clareza que faltava nas suas contas do mês';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export default async function OG() {
+export default function OG() {
   return new ImageResponse(
     (
       <div

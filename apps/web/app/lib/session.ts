@@ -1,5 +1,4 @@
 import { redirect } from 'next/navigation';
-import type { Route } from 'next';
 import { SessionUserSchema, type SessionUser } from '@lume/shared';
 import { apiFetch } from './api-server.js';
 
@@ -13,6 +12,6 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
 
 export async function requireUser(): Promise<SessionUser> {
   const user = await getCurrentUser();
-  if (!user) redirect('/login?next=/conta' as Route);
+  if (!user) redirect('/login?next=/conta');
   return user;
 }

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import type { Route } from 'next';
 import { ArrowRight } from 'lucide-react';
 import { copy } from '../../lib/copy.js';
 import { Button } from '../primitives/button.js';
@@ -38,7 +37,7 @@ export function FinalCta() {
             </div>
 
             <div className="flex flex-col gap-4 lg:col-span-4 lg:items-end">
-              <Link href={'/upload' as Route} className="inline-flex w-full sm:w-auto">
+              <Link href="/upload" className="inline-flex w-full sm:w-auto">
                 <Button block trailing={<ArrowRight size={16} strokeWidth={2.4} />}>
                   {copy.landing.primaryCta}
                 </Button>

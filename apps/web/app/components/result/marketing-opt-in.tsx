@@ -21,7 +21,7 @@ export function MarketingOptIn({ initial }: { initial: boolean }) {
     <Checkbox
       checked={value}
       disabled={pending}
-      onCheckedChange={(v) => onChange(v === true)}
+      onCheckedChange={(v) => { void onChange(v === true); }}
       label={copy.result.marketing.label}
       helper={copy.result.marketing.helper}
     />
