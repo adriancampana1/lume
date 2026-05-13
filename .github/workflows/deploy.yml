@@ -54,8 +54,14 @@
             username: deploy
             key: ${{ secrets.VPS_SSH_KEY }}
             script: |
-              set -e
+              # Navegar para o diretório do serviço
               cd /opt/services/lume
-              docker compose -f docker-compose.prod.yml pull
-              docker compose -f docker-compose.prod.yml up -d --force-recreate
+
+              # Baixar a imagem mais recente do ghcr.io
+              docker compose pull
+
+              # Recriar o container com a nova imagem (sem downtime perceptível)
+              docker compose up -d
+
+              # Remover imagens antigas sem tag para liberar espaço em disco
               docker image prune -f
