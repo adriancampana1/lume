@@ -12,7 +12,10 @@
       "Bash(rtk gh *)",
       "Bash(where gh *)",
       "Bash(where docker *)",
-      "Bash(pnpm *)"
+      "Bash(pnpm *)",
+      "Bash(rtk ls *)",
+      "Bash(rtk read *)",
+      "Bash(find D:/projetos/pessoais/lume/node_modules/.pnpm/@hono+auth-js@*/node_modules/@hono/auth-js/src -type f)"
     ]
   }
 }

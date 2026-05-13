@@ -28,10 +28,12 @@ export function SignInButton({ callbackUrl }: Props) {
       form.method = 'POST';
       form.action = '/api/auth/signin/google';
       const csrf = document.createElement('input');
+      csrf.type = 'hidden';
       csrf.name = 'csrfToken';
       csrf.value = token;
       form.appendChild(csrf);
       const cb = document.createElement('input');
+      cb.type = 'hidden';
       cb.name = 'callbackUrl';
       cb.value = callbackUrl;
       form.appendChild(cb);
