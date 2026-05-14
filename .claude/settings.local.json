@@ -15,7 +15,9 @@
       "Bash(pnpm *)",
       "Bash(rtk ls *)",
       "Bash(rtk read *)",
-      "Bash(find D:/projetos/pessoais/lume/node_modules/.pnpm/@hono+auth-js@*/node_modules/@hono/auth-js/src -type f)"
+      "Bash(find D:/projetos/pessoais/lume/node_modules/.pnpm/@hono+auth-js@*/node_modules/@hono/auth-js/src -type f)",
+      "PowerShell(Get-ChildItem -Recurse -File D:\\\\projetos\\\\pessoais\\\\lume\\\\apps\\\\web\\\\src | Where-Object { $_.Name -match \"sign|auth|google|login\" -and $_.Name -notmatch \"test|spec\" } | Select-Object FullName)",
+      "PowerShell(head *)"
     ]
   }
 }

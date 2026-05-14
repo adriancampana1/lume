@@ -1,61 +1,51 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '../components/primitives/button.js';
 
 type Props = { callbackUrl: string };
 
 export function SignInButton({ callbackUrl }: Props) {
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const csrfRef = useRef<string | null>(null);
 
   useEffect(() => {
     fetch('/api/auth/csrf')
       .then((r) => r.json())
-      .then((data: { csrfToken: string }) => {
-        csrfRef.current = data.csrfToken;
-      })
+      .then((data: { csrfToken: string }) => setCsrfToken(data.csrfToken))
       .catch(() => {});
   }, []);
 
   function handleClick() {
-    if (pending) return;
+    if (pending || !csrfToken) return;
     setPending(true);
 
-    const submit = (token: string) => {
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/api/auth/signin/google';
-      const csrf = document.createElement('input');
-      csrf.type = 'hidden';
-      csrf.name = 'csrfToken';
-      csrf.value = token;
-      form.appendChild(csrf);
-      const cb = document.createElement('input');
-      cb.type = 'hidden';
-      cb.name = 'callbackUrl';
-      cb.value = callbackUrl;
-      form.appendChild(cb);
-      document.body.appendChild(form);
-      form.submit();
-    };
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/api/auth/signin/google';
 
-    if (csrfRef.current) {
-      submit(csrfRef.current);
-    } else {
-      fetch('/api/auth/csrf')
-        .then((r) => r.json())
-        .then((data: { csrfToken: string }) => submit(data.csrfToken))
-        .catch(() => setPending(false));
-    }
+    const csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = 'csrfToken';
+    csrf.value = csrfToken;
+    form.appendChild(csrf);
+
+    const cb = document.createElement('input');
+    cb.type = 'hidden';
+    cb.name = 'callbackUrl';
+    cb.value = callbackUrl;
+    form.appendChild(cb);
+
+    document.body.appendChild(form);
+    form.submit();
   }
 
   return (
     <Button
       type="button"
-      disabled={pending}
-      trailing={!pending ? <ArrowRight size={16} strokeWidth={2.4} /> : null}
+      disabled={pending || !csrfToken}
+      trailing={!pending && csrfToken ? <ArrowRight size={16} strokeWidth={2.4} /> : null}
       onClick={handleClick}
     >
       {pending ? 'Indo pro Google…' : 'Entrar com Google'}
