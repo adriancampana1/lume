@@ -9,13 +9,26 @@ type Props = { callbackUrl: string };
 export function SignInButton({ callbackUrl }: Props) {
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [csrfFailed, setCsrfFailed] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
-    fetch('/api/auth/csrf')
-      .then((r) => r.json())
-      .then((data: { csrfToken: string }) => setCsrfToken(data.csrfToken))
-      .catch(() => {});
-  }, []);
+    let cancelled = false;
+    setCsrfFailed(false);
+    setCsrfToken(null);
+    const load = (attempt: number) => {
+      fetch('/api/auth/csrf')
+        .then((r) => { if (!r.ok) throw new Error(`${r.status}`); return r.json(); })
+        .then((data: { csrfToken: string }) => { if (!cancelled) setCsrfToken(data.csrfToken); })
+        .catch(() => {
+          if (cancelled) return;
+          if (attempt < 3) setTimeout(() => load(attempt + 1), 800 * attempt);
+          else setCsrfFailed(true);
+        });
+    };
+    load(1);
+    return () => { cancelled = true; };
+  }, [retryKey]);
 
   function handleClick() {
     if (pending || !csrfToken) return;
@@ -39,6 +52,14 @@ export function SignInButton({ callbackUrl }: Props) {
 
     document.body.appendChild(form);
     form.submit();
+  }
+
+  if (csrfFailed) {
+    return (
+      <Button type="button" variant="secondary" onClick={() => setRetryKey((k) => k + 1)}>
+        Tentar novamente
+      </Button>
+    );
   }
 
   return (

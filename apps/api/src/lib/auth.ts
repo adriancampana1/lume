@@ -6,7 +6,6 @@ import { accounts, sessions, users, verificationTokens } from '@lume/db';
 import { env } from '../env.js';
 
 export const authConfig: AuthConfig = {
-  basePath: '/auth',
   secret: env.AUTH_SECRET,
   trustHost: true,
   session: { strategy: 'database' },
