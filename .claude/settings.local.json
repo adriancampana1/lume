@@ -22,7 +22,8 @@
       "Bash(rtk find *)",
       "Bash(xargs grep -l \"auth\\\\|nextauth\\\\|NextAuth\")",
       "Bash(xargs grep -l \"csrf\\\\|CSRF\")",
-      "Bash(xargs grep -l \"Google\\\\|google\")"
+      "Bash(xargs grep -l \"Google\\\\|google\")",
+      "Skill(superpowers:using-superpowers)"
     ]
   }
 }

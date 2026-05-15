@@ -48,7 +48,7 @@ export function CapCard({
 
       <div className="lume-rise lume-rise-5 mt-8">
         <a
-          href="https://instagram.com/"
+          href="https://instagram.com/adrian.campana"
           target="_blank"
           rel="noreferrer noopener"
           className="group inline-flex h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--color-border-strong)] bg-transparent px-4 t-body-s font-semibold text-[var(--color-ink)] transition-[transform,border-color] duration-[220ms] ease-[var(--ease-out-expo)] hover:-translate-y-px hover:border-[var(--color-border-ink)]"

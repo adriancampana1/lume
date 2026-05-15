@@ -68,7 +68,7 @@ export const copy = {
       links: [
         { label: 'Privacidade', href: '/privacidade' },
         { label: 'Termos', href: '/termos' },
-        { label: 'Instagram do criador', href: 'https://instagram.com/' },
+        { label: 'Instagram do criador', href: 'https://instagram.com/adrian.campana' },
       ],
       tagline: 'Lume — clareza que cabe no bolso.',
     },

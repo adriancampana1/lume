@@ -66,7 +66,7 @@ export function Hero() {
               </Link>
               <a
                 href="#como-funciona"
-                className="inline-flex h-[52px] items-center justify-center rounded-[var(--radius-btn)] px-2 t-body font-semibold text-[var(--color-ink-2)] transition-colors hover:text-[var(--color-ink)]"
+                className="inline-flex h-[52px] items-center justify-start rounded-[var(--radius-btn)] px-2 t-body font-semibold text-[var(--color-ink-2)] transition-colors hover:text-[var(--color-ink)]"
               >
                 Ver como funciona
               </a>
