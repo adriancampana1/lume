@@ -144,6 +144,7 @@ sessionsRoute.post('/upload', async (c) => {
     totalBytes += f.size;
     if (totalBytes > MAX_TOTAL_BYTES) return c.json({ error: 'total_too_large' }, 400);
     const buf = new Uint8Array(await f.arrayBuffer());
+    if (!hasValidMagicBytes(buf, ext)) return c.json({ error: 'invalid_type' }, 400);
     accepted.push({ name: sanitizeFilename(f.name, ext), bytes: buf });
   }
 
@@ -170,6 +171,18 @@ sessionsRoute.post('/upload', async (c) => {
 function sanitizeFilename(name: string, ext: string): string {
   const base = name.slice(0, name.length - ext.length).replace(/[^a-zA-Z0-9_-]/g, '_');
   return `${base.slice(0, 80) || 'file'}${ext}`;
+}
+
+function hasValidMagicBytes(buf: Uint8Array, ext: string): boolean {
+  if (ext === '.pdf') {
+    const head = Buffer.from(buf.subarray(0, 5)).toString('binary');
+    return head.startsWith('%PDF-');
+  }
+  if (ext === '.ofx') {
+    const head = Buffer.from(buf.subarray(0, 256)).toString('utf8');
+    return /^OFXHEADER:/m.test(head) || /<OFX>|<\?xml[^>]*\?>\s*<OFX>/i.test(head);
+  }
+  return false;
 }
 
 sessionsRoute.get('/active', requireAuth, async (c) => {

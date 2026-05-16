@@ -110,6 +110,32 @@ describe('POST /sessions/upload', () => {
     expect(res.status).toBe(401);
   });
 
+  it('rejects PDF with wrong magic bytes (e.g. renamed executable)', async () => {
+    const { cookie } = await createSession();
+    const fakeBytes = new Uint8Array([0x4d, 0x5a, 0x90, 0x00]); // MZ header (EXE)
+    const res = await app.request('/sessions/upload', {
+      method: 'POST',
+      headers: { cookie },
+      body: makeFormData([{ name: 'statement.pdf', bytes: fakeBytes, type: 'application/pdf' }]),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toBe('invalid_type');
+  });
+
+  it('rejects OFX with wrong magic bytes', async () => {
+    const { cookie } = await createSession();
+    const fakeBytes = new TextEncoder().encode('not an ofx file at all');
+    const res = await app.request('/sessions/upload', {
+      method: 'POST',
+      headers: { cookie },
+      body: makeFormData([{ name: 'statement.ofx', bytes: fakeBytes, type: 'application/x-ofx' }]),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toBe('invalid_type');
+  });
+
   it('rejects files whose sanitized names collide', async () => {
     const { cookie } = await createSession();
     const res = await app.request('/sessions/upload', {

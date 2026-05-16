@@ -23,7 +23,9 @@
       "Bash(xargs grep -l \"auth\\\\|nextauth\\\\|NextAuth\")",
       "Bash(xargs grep -l \"csrf\\\\|CSRF\")",
       "Bash(xargs grep -l \"Google\\\\|google\")",
-      "Skill(superpowers:using-superpowers)"
+      "Skill(superpowers:using-superpowers)",
+      "Bash(rtk vitest *)",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(t['name']\\) for s in data.get\\('testResults',[]\\) for t in s.get\\('assertionResults',[]\\) if 'magic' in t['name'] or 'wrong' in t['name'] or 'sessions-upload' in s.get\\('testFilePath',''\\)]\")"
     ]
   }
 }
