@@ -10,16 +10,17 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env['NEXT_PUBLIC_APP_URL'] ?? 'http://localhost:3000'),
 };
 
-<Script
-  src="https://analytics.adriancampana.cloud/script.js"
-  data-website-id="85510707-c9be-4dba-9a5e-27a5f0cb8b32"
-  strategy="afterInteractive"
-/>
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={`${geist.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Script
+            src="https://analytics.adriancampana.cloud/script.js"
+            data-website-id="85510707-c9be-4dba-9a5e-27a5f0cb8b32"
+            strategy="afterInteractive"
+        />
+        {children}
+      </body>
     </html>
   );
 }
